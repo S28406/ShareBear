@@ -35,7 +35,6 @@ D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\System.Composition.Convention.dll
 D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\System.Composition.Hosting.dll
 D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\System.Composition.Runtime.dll
 D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\System.Composition.TypedParts.dll
-D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\System.Text.Json.dll
 D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\cs\Microsoft.CodeAnalysis.resources.dll
 D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\de\Microsoft.CodeAnalysis.resources.dll
 D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\es\Microsoft.CodeAnalysis.resources.dll
@@ -118,3 +117,4 @@ D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\refint\PRO_.dll
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO_.pdb
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO_.genruntimeconfig.cache
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\ref\PRO_.dll
+D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO_.sourcelink.json

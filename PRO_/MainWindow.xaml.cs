@@ -1,35 +1,69 @@
-﻿using System.Text;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using PRO.Data.Context;
 
-namespace PRO_;
-
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
+namespace PRO_
 {
-    private readonly ToolLendingContext _context;
-
-    public MainWindow(ToolLendingContext context)
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
-        _context = context;
+        private readonly ToolLendingContext _context;
 
-        LoadData();
-    }
+        public MainWindow(ToolLendingContext context)
+        {
+            InitializeComponent();
+            _context = context;
 
-    private void LoadData()
-    {
-        UsersListBox.ItemsSource = _context.Users.ToList();
-        ToolsListBox.ItemsSource = _context.Tools.ToList();
+            LoadFilters();
+            LoadTools();
+        }
+
+        private void LoadFilters()
+        {
+            // Populate Brand and Ownership filters
+            var brands = _context.Tools
+                .Select(t => t.Brand)
+                .Distinct()
+                .OrderBy(b => b)
+                .ToList();
+
+            var ownerships = _context.Tools
+                .Select(t => t.Ownership)
+                .Distinct()
+                .OrderBy(o => o)
+                .ToList();
+
+            BrandFilterComboBox.Items.Add("All");
+            foreach (var brand in brands)
+                BrandFilterComboBox.Items.Add(brand);
+            BrandFilterComboBox.SelectedIndex = 0;
+
+            OwnershipFilterComboBox.Items.Add("All");
+            foreach (var ownership in ownerships)
+                OwnershipFilterComboBox.Items.Add(ownership);
+            OwnershipFilterComboBox.SelectedIndex = 0;
+        }
+
+        private void LoadTools()
+        {
+            var selectedBrand = BrandFilterComboBox.SelectedItem?.ToString();
+            var selectedOwnership = OwnershipFilterComboBox.SelectedItem?.ToString();
+
+            var tools = _context.Tools.AsQueryable();
+
+            if (!string.IsNullOrEmpty(selectedBrand) && selectedBrand != "All")
+                tools = tools.Where(t => t.Brand == selectedBrand);
+
+            if (!string.IsNullOrEmpty(selectedOwnership) && selectedOwnership != "All")
+                tools = tools.Where(t => t.Ownership == selectedOwnership);
+
+            ToolsListBox.ItemsSource = tools.ToList();
+        }
+
+        private void OnFilterChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (IsLoaded)
+                LoadTools();
+        }
     }
 }

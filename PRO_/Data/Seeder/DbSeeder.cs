@@ -1,7 +1,7 @@
 ﻿using PRO.Data.Context;
 using PRO.Models;
 
-namespace PRO.Data.Seeder;
+namespace PRO_.Data.Seeder;
 
 public static class DbSeeder
 {
@@ -26,7 +26,6 @@ public static class DbSeeder
     public static void Seed(ToolLendingContext context)
     {
         // Clean(context);
-        // Skip if already seeded
         if (context.Users.Any()) return;
 
         

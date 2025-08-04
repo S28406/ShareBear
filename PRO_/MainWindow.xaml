@@ -1,26 +1,105 @@
-﻿<Window x:Class="PRO_.MainWindow"
+﻿<!-- <Window x:Class="ToolRent.MainWindow" -->
+<!--         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" -->
+<!--         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" -->
+<!--         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" -->
+<!--         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" -->
+<!--         xmlns:local="clr-namespace:ToolRent" -->
+<!--         mc:Ignorable="d" -->
+<!--         Title="ToolRent" Height="800" Width="1200" Background="#F8FAFC"> -->
+<!--     <DockPanel LastChildFill="True"> -->
+<!-- -->
+<!--         ~1~ Header @1@ -->
+<!--         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="White" Height="60" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,0,0,1"> -->
+<!--             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0"> -->
+<!--                 <TextBlock Text="ToolRent" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0"/> -->
+<!--                 <TextBox Width="200" Height="30" Margin="20,0" VerticalAlignment="Center"/> -->
+<!--             </StackPanel> -->
+<!--             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,20,0"> -->
+<!--                 <Button Content="Register" Width="84" Height="30" Background="#0c7ff2" Foreground="White" FontWeight="Bold" Margin="5,0"/> -->
+<!--                 <Button Content="Sign In" Width="84" Height="30" Background="#e7edf4" Foreground="Black" FontWeight="Bold" Margin="5,0"/> -->
+<!--             </StackPanel> -->
+<!--         </StackPanel> -->
+<!-- -->
+<!--         ~1~ Main Content @1@ -->
+<!--         <Grid> -->
+<!--             <Grid.ColumnDefinitions> -->
+<!--                 <ColumnDefinition Width="200"/> -->
+<!--                 <ColumnDefinition Width="*"/> -->
+<!--             </Grid.ColumnDefinitions> -->
+<!-- -->
+<!--             ~1~ Left Filters Panel @1@ -->
+<!--             <StackPanel Grid.Column="0" Background="White"> -->
+<!--                 <TextBlock Text="Brand" FontSize="16" FontWeight="Bold" Margin="0,10,0,5"/> -->
+<!--                 <CheckBox Content="Kraft&amp;Dele" Margin="5"/> -->
+<!--                 <CheckBox Content="Stahwille" Margin="5"/> -->
+<!--                 <CheckBox Content="No brand" Margin="5"/> -->
+<!-- -->
+<!--                 <TextBlock Text="Ownership" FontSize="16" FontWeight="Bold" Margin="0,20,0,5"/> -->
+<!--                 <CheckBox Content="Private person" Margin="5"/> -->
+<!--                 <CheckBox Content="Private company" Margin="5"/> -->
+<!--                 <CheckBox Content="Public ownership" Margin="5"/> -->
+<!--             </StackPanel> -->
+<!-- -->
+<!--             ~1~ Tool Listings @1@ -->
+<!--             <StackPanel Grid.Column="1" Background="#F8FAFC"> -->
+<!--                 <TextBlock Text="Sort by" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/> -->
+<!--                 <ComboBox Width="200" Margin="0,0,0,10"> -->
+<!--                     <ComboBoxItem Content="Newest" IsSelected="True"/> -->
+<!--                     <ComboBoxItem Content="Price ↑"/> -->
+<!--                     <ComboBoxItem Content="Price ↓"/> -->
+<!--                     <ComboBoxItem Content="Rating"/> -->
+<!--                 </ComboBox> -->
+<!--                 <WrapPanel ItemWidth="150" ItemHeight="200"> -->
+<!--                     ~1~ Example Item @1@ -->
+<!--                     <StackPanel Width="150" Margin="5"> -->
+<!--                         <Border Height="150" Background="Gray" CornerRadius="8"/> -->
+<!--                         <TextBlock Text="Precision Screwdriver Set" FontWeight="Medium" FontSize="14"/> -->
+<!--                         <TextBlock Text="$10/day" Foreground="#49739c" FontSize="12"/> -->
+<!--                     </StackPanel> -->
+<!--                     ~1~ Repeat items as needed @1@ -->
+<!--                 </WrapPanel> -->
+<!--             </StackPanel> -->
+<!--         </Grid> -->
+<!-- -->
+<!--         ~1~ Footer @1@ -->
+<!--         <StackPanel DockPanel.Dock="Bottom" Background="#F8FAFC"> -->
+<!--             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10"> -->
+<!--                 <TextBlock Text="Help Center" Margin="10" Foreground="#49739c"/> -->
+<!--                 <TextBlock Text="Contact Info" Margin="10" Foreground="#49739c"/> -->
+<!--                 <TextBlock Text="Resources" Margin="10" Foreground="#49739c"/> -->
+<!--             </StackPanel> -->
+<!--             <TextBlock Text="@2024 ToolRent. All rights reserved." HorizontalAlignment="Center" Foreground="#49739c"/> -->
+<!--         </StackPanel> -->
+<!-- -->
+<!--     </DockPanel> -->
+<!-- </Window> -->
+<Window x:Class="PRO_.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PRO_"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="ToolRent" Height="600" Width="900">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="200" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+        <!-- Sidebar Filters -->
         <StackPanel Grid.Column="0">
-            <TextBlock Text="Users" FontSize="16" FontWeight="Bold" Margin="0,0,0,10" />
-            <ListBox x:Name="UsersListBox" DisplayMemberPath="Username" Height="350" />
+            <TextBlock Text="Filter by Brand" FontWeight="Bold" Margin="0,0,0,5" />
+            <ComboBox x:Name="BrandFilterComboBox" SelectionChanged="OnFilterChanged" Margin="0,0,0,10" />
+
+            <TextBlock Text="Filter by Ownership" FontWeight="Bold" Margin="0,10,0,5" />
+            <ComboBox x:Name="OwnershipFilterComboBox" SelectionChanged="OnFilterChanged" Margin="0,0,0,10" />
         </StackPanel>
 
-        <StackPanel Grid.Column="1">
+        <!-- Tool List -->
+        <StackPanel Grid.Column="1" Margin="10,0,0,0">
             <TextBlock Text="Tools" FontSize="16" FontWeight="Bold" Margin="0,0,0,10" />
-            <ListBox x:Name="ToolsListBox" DisplayMemberPath="Name" Height="350" />
+            <ListBox x:Name="ToolsListBox" DisplayMemberPath="Name" Height="450" />
         </StackPanel>
     </Grid>
-
 </Window>

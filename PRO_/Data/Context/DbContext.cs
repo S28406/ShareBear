@@ -90,9 +90,7 @@ public class ToolLendingContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=toollendingdb;Username=postgres;Password=admin")
-            // .UseSnakeCaseNamingConvention();
-            ;
+        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=toollendingdb;Username=postgres;Password=admin");
     }
 
 }
