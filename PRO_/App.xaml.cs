@@ -3,6 +3,7 @@ using System.Data;
 using System.Windows;
 using PRO_.Data.Seeder;
 using PRO.Data.Context;
+using ToolRent;
 
 namespace PRO_
 {
@@ -14,7 +15,7 @@ namespace PRO_
 
             var context = new ToolLendingContext();
             DbSeeder.Seed(context);
-            var mainWindow = new MainWindow(context);
+            var mainWindow = new MainWindow();
             mainWindow.Show();
         }
     }
