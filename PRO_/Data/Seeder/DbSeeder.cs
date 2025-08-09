@@ -53,7 +53,8 @@ public static class DbSeeder
             new Tool {
                 ID = Guid.NewGuid(), 
                 Name = "Cordless Drill", Description = "18V cordless power drill",
-                Price = 49.99f, Quantity = 10, Users_ID = users[0].ID, CategoryId = categories[0].ID
+                Price = 49.99f, Quantity = 10, Users_ID = users[0].ID, CategoryId = categories[0].ID,
+                ImmagePath = "D:\\Projects\\PRO_\\PRO_\\Immages\\Drill.jpg"
             },
             new Tool {
                 ID = Guid.NewGuid(), 

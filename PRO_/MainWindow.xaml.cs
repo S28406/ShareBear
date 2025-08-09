@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -57,14 +58,29 @@ namespace ToolRent
                     Margin = new Thickness(10),
                     Width = 180
                 };
-
-                // Placeholder image
-                card.Children.Add(new Border
+                
+                var image = new Image
                 {
                     Height = 100,
-                    Background = System.Windows.Media.Brushes.LightGray,
-                    CornerRadius = new CornerRadius(8)
-                });
+                    Width = 180,
+                    Stretch = System.Windows.Media.Stretch.UniformToFill
+                };
+                try
+                {
+                    if (!string.IsNullOrEmpty(tool.ImmagePath) && File.Exists(tool.ImmagePath))
+                    {
+                        image.Source = new BitmapImage(new Uri(tool.ImmagePath));
+                    }
+                    else
+                    {
+                        image.Source = new BitmapImage(new Uri("D:\\Projects\\PRO_\\PRO_\\Immages\\placeholder.jpg"));
+                    }
+                }
+                catch
+                {
+                    image.Source = new BitmapImage(new Uri("D:\\Projects\\PRO_\\PRO_\\Immages\\placeholder.jpg"));
+                }
+                card.Children.Add(image);
 
                 card.Children.Add(new TextBlock
                 {
