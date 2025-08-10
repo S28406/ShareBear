@@ -67,18 +67,18 @@ namespace ToolRent
                 };
                 try
                 {
-                    if (!string.IsNullOrEmpty(tool.ImmagePath) && File.Exists(tool.ImmagePath))
+                    if (!string.IsNullOrEmpty(tool.ImagePath) && File.Exists(tool.ImagePath))
                     {
-                        image.Source = new BitmapImage(new Uri(tool.ImmagePath));
+                        image.Source = new BitmapImage(new Uri(tool.ImagePath));
                     }
                     else
                     {
-                        image.Source = new BitmapImage(new Uri("D:\\Projects\\PRO_\\PRO_\\Immages\\placeholder.jpg"));
+                        image.Source = new BitmapImage(new Uri("D:\\Projects\\PRO_\\PRO_\\Images\\placeholder.jpg"));
                     }
                 }
                 catch
                 {
-                    image.Source = new BitmapImage(new Uri("D:\\Projects\\PRO_\\PRO_\\Immages\\placeholder.jpg"));
+                    image.Source = new BitmapImage(new Uri("D:\\Projects\\PRO_\\PRO_\\Images\\placeholder.jpg"));
                 }
                 card.Children.Add(image);
 

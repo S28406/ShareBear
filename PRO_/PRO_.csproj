@@ -21,4 +21,14 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <None Remove="Immages\Drill.jpg" />
+    <Content Include="Images\Drill.jpg" />
+    <None Remove="Immages\hamer.jpg" />
+    <Content Include="Images\hamer.jpg" />
+    <None Remove="Immages\placeholder.jpg" />
+    <Resource Include="Images\placeholder.jpg" />
+  </ItemGroup>
+
 </Project>

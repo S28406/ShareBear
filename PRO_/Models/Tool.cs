@@ -15,7 +15,7 @@ public class Tool
     public float Price { get; set; }
     [Required]
     public int Quantity { get; set; }
-    public string ImmagePath { get; set; }
+    public string ImagePath { get; set; }
 
     [Required]
     public Guid Users_ID { get; set; }

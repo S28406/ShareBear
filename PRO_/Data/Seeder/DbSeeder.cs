@@ -25,7 +25,7 @@ public static class DbSeeder
     }
     public static void Seed(ToolLendingContext context)
     {
-        // Clean(context);
+        Clean(context);
         if (context.Users.Any()) return;
 
         
@@ -54,13 +54,13 @@ public static class DbSeeder
                 ID = Guid.NewGuid(), 
                 Name = "Cordless Drill", Description = "18V cordless power drill",
                 Price = 49.99f, Quantity = 10, Users_ID = users[0].ID, CategoryId = categories[0].ID,
-                ImmagePath = "D:\\Projects\\PRO_\\PRO_\\Immages\\Drill.jpg"
+                ImagePath = "Drill.jpg"
             },
             new Tool {
                 ID = Guid.NewGuid(), 
                 Name = "Hammer", Description = "Heavy duty hammer",
                 Price = 9.99f, Quantity = 20, Users_ID = users[1].ID, CategoryId = categories[1].ID,
-                ImmagePath = "D:\\Projects\\PRO_\\PRO_\\Immages\\hamer.jpg"
+                ImagePath = "hamer.jpg"
             }
         };
         context.Tools.AddRange(tools);

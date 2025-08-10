@@ -385,7 +385,7 @@ namespace PRO_.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ImmagePath")
+                    b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasColumnType("text");
 
