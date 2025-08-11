@@ -119,3 +119,5 @@ D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO_.genruntimeconfig.cache
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\ref\PRO_.dll
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO_.sourcelink.json
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO__Content.g.cs
+D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\Images\Drill.jpg
+D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\Images\hamer.jpg

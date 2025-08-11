@@ -24,9 +24,13 @@
 
   <ItemGroup>
     <None Remove="Immages\Drill.jpg" />
-    <Content Include="Images\Drill.jpg" />
+    <Content Include="Images\Drill.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Remove="Immages\hamer.jpg" />
-    <Content Include="Images\hamer.jpg" />
+    <Content Include="Images\hamer.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Remove="Immages\placeholder.jpg" />
     <Resource Include="Images\placeholder.jpg" />
   </ItemGroup>

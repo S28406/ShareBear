@@ -61,6 +61,12 @@ public static class DbSeeder
                 Name = "Hammer", Description = "Heavy duty hammer",
                 Price = 9.99f, Quantity = 20, Users_ID = users[1].ID, CategoryId = categories[1].ID,
                 ImagePath = "hamer.jpg"
+            },
+            new Tool {
+                ID = Guid.NewGuid(), 
+                Name = "Hammer", Description = "Heavy duty hammer",
+                Price = 9.99f, Quantity = 20, Users_ID = users[1].ID, CategoryId = categories[1].ID,
+                ImagePath = "hamer.jpg"
             }
         };
         context.Tools.AddRange(tools);
