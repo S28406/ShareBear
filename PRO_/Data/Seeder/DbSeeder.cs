@@ -64,9 +64,9 @@ public static class DbSeeder
             },
             new Tool {
                 ID = Guid.NewGuid(), 
-                Name = "Hammer", Description = "Heavy duty hammer",
+                Name = "Band saw machine", Description = " ",
                 Price = 9.99f, Quantity = 20, Users_ID = users[1].ID, CategoryId = categories[1].ID,
-                ImagePath = "hamer.jpg"
+                ImagePath = "band_saw_machine.jpg"
             }
         };
         context.Tools.AddRange(tools);

@@ -33,6 +33,10 @@
     </Content>
     <None Remove="Immages\placeholder.jpg" />
     <Resource Include="Images\placeholder.jpg" />
+    <None Remove="Images\band_saw_machine.jpg" />
+    <Content Include="Images\band_saw_machine.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
