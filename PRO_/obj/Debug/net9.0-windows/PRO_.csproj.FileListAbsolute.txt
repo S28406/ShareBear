@@ -104,7 +104,6 @@ D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO_.csproj.AssemblyReference.cac
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\MainWindow.g.cs
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\App.g.cs
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO__MarkupCompile.cache
-D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO__MarkupCompile.lref
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\MainWindow.baml
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO_.g.resources
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO_.GeneratedMSBuildEditorConfig.editorconfig
@@ -121,3 +120,8 @@ D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO_.sourcelink.json
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO__Content.g.cs
 D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\Images\Drill.jpg
 D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\Images\hamer.jpg
+D:\Projects\PRO_\PRO_\bin\Debug\net9.0-windows\Images\band_saw_machine.jpg
+D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\ToolDescription.baml
+D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\ToolDescription.g.cs
+D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\ToolListPage.baml
+D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\ToolListPage.g.cs
