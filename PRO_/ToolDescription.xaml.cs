@@ -18,7 +18,19 @@ namespace ToolRent.Views
         {
             InitializeComponent();
             _toolId = toolId;
-            Loaded += (_, __) => LoadData();
+            Loaded += (_, __) =>
+            {
+                LoadData();
+                BackButton.IsEnabled = NavigationService?.CanGoBack ?? false;
+            };
+        }
+
+        private void BackButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (NavigationService?.CanGoBack == true)
+                NavigationService.GoBack();
+            else
+                NavigationService?.Navigate(new ToolListPage());
         }
 
         private void LoadData()
@@ -60,10 +72,10 @@ namespace ToolRent.Views
                 {
                     var p1 = Path.Combine(baseDir, raw);
                     var p2 = Path.Combine(baseDir, "Images", Path.GetFileName(raw ?? ""));
-                    fullPath = File.Exists(p1) ? p1 : p2;
+                    fullPath = System.IO.File.Exists(p1) ? p1 : p2;
                 }
 
-                if (File.Exists(fullPath))
+                if (System.IO.File.Exists(fullPath))
                 {
                     var bmp = new BitmapImage();
                     bmp.BeginInit();
