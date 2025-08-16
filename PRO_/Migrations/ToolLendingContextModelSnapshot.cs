@@ -112,9 +112,6 @@ namespace PRO_.Migrations
                     b.Property<Guid>("UserID")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("Users_ID")
-                        .HasColumnType("uuid");
-
                     b.HasKey("ID");
 
                     b.HasIndex("Tool_ID");

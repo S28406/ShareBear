@@ -16,6 +16,6 @@ public class History
     public Tool Tool { get; set; }
 
     [Required]
-    public Guid Users_ID { get; set; }
+    public Guid UserID { get; set; }
     public User User { get; set; }
 }
