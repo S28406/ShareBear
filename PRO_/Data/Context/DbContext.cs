@@ -86,6 +86,12 @@ public class ToolLendingContext : DbContext
         modelBuilder.Entity<Tool>().HasKey(u => u.ID);
         modelBuilder.Entity<ToolAccessory>().HasKey(u => u.ID);
         modelBuilder.Entity<User>().HasKey(u => u.ID);
+        
+        
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Username).IsUnique();
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email).IsUnique();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

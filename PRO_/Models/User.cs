@@ -13,9 +13,12 @@ public class User
     [Required]
     public string Email { get; set; }
     [Required]
-    public string Password { get; set; }
-    [Required]
     public string Role { get; set; }
+    [Required]
+    public byte[] PasswordHash { get; set; }
+    [Required]
+    public byte[] PasswordSalt { get; set; }
+    
 
     public ICollection<Tool> Tools { get; set; }
     public ICollection<Borrow> Borrows { get; set; }
