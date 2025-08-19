@@ -81,6 +81,13 @@ namespace ToolRent.Views
             NavigationService?.Navigate(new LoginPage());
         }
 
+        private void BackButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (NavigationService?.CanGoBack == true)
+                NavigationService.GoBack();
+            else
+                NavigationService?.Navigate(new ToolListPage());
+        }
         private void GoToLogin_Click(object sender, RoutedEventArgs e)
             => NavigationService?.Navigate(new LoginPage());
 
