@@ -89,8 +89,10 @@ public static class DbSeeder
         // ACCESSORIES
         var accessories = new List<ToolAccessory>
         {
-            new() { ID = Guid.NewGuid(), Name = "Drill Bits", Description = "Assorted drill bits", Quantity_Available = 50, Tool_ID = tools[0].ID },
-            new() { ID = Guid.NewGuid(), Name = "Nails",      Description = "Box of 100 nails",      Quantity_Available = 100, Tool_ID = tools[1].ID }
+            new() { ID = Guid.NewGuid(), Name = "Drill Bits", Description = "Assorted drill bits",
+                Quantity_Available = 50, Tool_ID = tools[0].ID },
+            new() { ID = Guid.NewGuid(), Name = "Nails",      Description = "Box of 100 nails",
+                Quantity_Available = 100, Tool_ID = tools[1].ID }
         };
         context.ToolAccessories.AddRange(accessories);
         context.SaveChanges();
@@ -103,6 +105,15 @@ public static class DbSeeder
             Tool_ID = tools[0].ID,
             Added_at = DateTime.UtcNow
         });
+        // Review
+        context.Reviews.Add(new Review{
+            ID = Guid.NewGuid(),
+            Rating = 5,
+            Description = "Great product",
+            Date = DateTime.UtcNow,
+            Tools_ID = tools[0].ID,
+            Users_ID = users[1].ID
+            });
         context.SaveChanges();
     }
 }
