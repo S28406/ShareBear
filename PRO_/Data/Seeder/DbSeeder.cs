@@ -111,8 +111,8 @@ public static class DbSeeder
             Rating = 5,
             Description = "Great product",
             Date = DateTime.UtcNow,
-            Tools_ID = tools[0].ID,
-            Users_ID = users[1].ID
+            ToolID = tools[0].ID,
+            UserID = users[1].ID
             });
         context.SaveChanges();
     }

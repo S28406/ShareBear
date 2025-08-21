@@ -63,7 +63,7 @@ public class ToolLendingContext : DbContext
         modelBuilder.Entity<Tool>()
             .HasMany(t => t.Reviews)
             .WithOne(r => r.Tool)
-            .HasForeignKey(r => r.Tools_ID);
+            .HasForeignKey(r => r.ToolID);
 
         modelBuilder.Entity<Return>()
             .HasOne(r => r.Borrow)
