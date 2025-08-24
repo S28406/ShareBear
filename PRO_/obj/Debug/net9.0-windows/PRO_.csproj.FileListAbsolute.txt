@@ -129,3 +129,9 @@ D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\Views\RegPage.g.cs
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\Views\ToolDescription.g.cs
 D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\Views\ToolListPage.g.cs
+D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\Views\Confirmation.g.cs
+D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\Views\History.g.cs
+D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\PRO__MarkupCompile.lref
+D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\Views\Confirmation.baml
+D:\Projects\PRO_\PRO_\obj\Debug\net9.0-windows\Views\History.baml

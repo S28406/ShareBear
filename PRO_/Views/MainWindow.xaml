@@ -13,6 +13,8 @@
                 <TextBox Width="200" Height="30" VerticalAlignment="Center" Margin="0,0,20,0" HorizontalAlignment="Left"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right" VerticalAlignment="Center">
                     <Button Content="Register" Click="GoRegister_Click" Width="84" Height="30" Margin="5,0" Background="#0C7FF2" Foreground="White" FontWeight="Bold"/>
+                    <Button Content="History" Click="GoHistory_Click" Width="100" Height="30" Margin="5,0"
+                            Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/>
                     <Button Content="Sign In" Click="GoLogin_Click" Width="84" Height="30" Margin="5,0" Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/>
                 </StackPanel>
             </DockPanel>
