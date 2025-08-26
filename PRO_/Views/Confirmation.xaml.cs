@@ -115,44 +115,31 @@ namespace ToolRent.Views
         private async void Confirm_Click(object sender, RoutedEventArgs e)
         {
             HideError();
-
-            if (AppState.CurrentUser is null)
-            {
-                ShowError("Please sign in.");
-                return;
-            }
+            if (AppState.CurrentUser is null) { ShowError("Please sign in."); return; }
 
             var method = GetSelectedMethod();
-            if (string.IsNullOrEmpty(method))
-            {
-                ShowError("Please choose a payment method.");
-                return;
-            }
-
+            if (string.IsNullOrEmpty(method)) { ShowError("Please choose a payment method."); return; }
             var status = GetSuggestedStatus(method);
 
             try
             {
                 await using var db = new ToolLendingContext();
 
-                var owned = await db.Borrows
+                var borrow = await db.Borrows
                     .Include(b => b.User)
-                    .AnyAsync(b => b.ID == _borrowId && b.User != null && b.User.ID == AppState.CurrentUser.ID);
+                    .FirstOrDefaultAsync(b => b.ID == _borrowId && b.User != null && b.User.ID == AppState.CurrentUser.ID);
 
-                if (!owned)
-                {
-                    ShowError("Order not found or not accessible.");
-                    return;
-                }
+                if (borrow is null) { ShowError("Order not found or not accessible."); return; }
 
                 var payment = new Payment
                 {
-                    ID        = Guid.NewGuid(),
-                    Date      = DateTime.UtcNow,              
-                    Ammount   = (float)_total,                   
-                    Status    = status,
-                    Method    = method,
-                    Orders_ID = _borrowId
+                    ID      = Guid.NewGuid(),
+                    Date    = DateTime.UtcNow,              
+                    Ammount = (float)_total,
+                    Status  = status,
+                    Method  = method,
+                    Borrow  = borrow,
+                    Orders_ID = borrow.ID
                 };
 
                 db.Payments.Add(payment);
@@ -160,6 +147,10 @@ namespace ToolRent.Views
 
                 MessageBox.Show("Payment confirmed.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 NavigationService?.Navigate(new History());
+            }
+            catch (DbUpdateException ex)
+            {
+                ShowError("Failed to confirm payment: " + (ex.InnerException?.Message ?? ex.Message));
             }
             catch (Exception ex)
             {

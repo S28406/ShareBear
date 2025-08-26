@@ -29,6 +29,14 @@ public class ToolLendingContext : DbContext
 
         modelBuilder.Entity<LendingPartner>()
             .HasKey(lp => new { User_Id = lp.Users_Id, Partner_Id = lp.Partners_Id });
+        
+        modelBuilder.Entity<Payment>(e =>
+        {
+            e.HasOne(p => p.Borrow)
+                .WithMany(b => b.Payments)
+                .HasForeignKey(p => p.Orders_ID)          // use Orders_ID as FK
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         modelBuilder.Entity<User>()
             .HasMany(u => u.Tools)
@@ -92,6 +100,17 @@ public class ToolLendingContext : DbContext
             .HasIndex(u => u.Username).IsUnique();
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Email).IsUnique();
+        
+        modelBuilder.Entity<Borrow>(e =>
+        {
+            e.Property(x => x.Status).HasDefaultValue("Pending");
+            e.Property(x => x.Date).HasDefaultValueSql("timezone('utc', now())");
+            e.Property(x => x.Price).HasDefaultValue(0);
+        });
+        modelBuilder.Entity<ProductBorrow>(e =>
+        {
+            e.Property(x => x.Quantity).HasDefaultValue(1);
+        });
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

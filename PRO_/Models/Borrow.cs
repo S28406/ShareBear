@@ -21,4 +21,6 @@ public class Borrow
 
     public ICollection<Return> Returns { get; set; }
     public ICollection<ProductBorrow> ProductBorrows { get; set; }
+    
+    public ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }

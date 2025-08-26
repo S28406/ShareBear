@@ -30,71 +30,71 @@ namespace ToolRent.Views
         }
 
         private async Task LoadDataAsync()
+{
+    try
+    {
+        if (AppState.CurrentUser is null)
         {
-            try
-            {
-                if (AppState.CurrentUser is null)
-                {
-                    MessageBox.Show("Please sign in to view your purchase history.", "Sign in required",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
-                    return;
-                }
-
-                var userId = AppState.CurrentUser.ID;
-
-                var from = FromPicker.SelectedDate?.Date;
-                DateTime? to = ToPicker.SelectedDate?.Date;           
-                if (to.HasValue) to = to.Value.AddDays(1).AddTicks(-1);
-
-                var status = (StatusBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "All";
-                var search = (SearchBox.Text ?? "").Trim();
-
-                await using var db = new ToolLendingContext();
-
-                var query = db.Payments
-                    .AsNoTracking()
-                    .AsSplitQuery()
-                    .Include(p => p.Borrow).ThenInclude(b => b.User)
-                    .Where(p => p.Borrow != null && p.Borrow.User != null && p.Borrow.User.ID == userId);
-
-                if (from.HasValue) query = query.Where(p => p.Date >= from.Value);
-                if (to.HasValue)   query = query.Where(p => p.Date <= to.Value);
-
-                if (!string.Equals(status, "All", StringComparison.OrdinalIgnoreCase))
-                    query = query.Where(p => p.Status == status);
-
-                if (!string.IsNullOrEmpty(search))
-                {
-                    if (Guid.TryParse(search, out var orderId))
-                        query = query.Where(p => p.Orders_ID == orderId);
-                    else
-                        query = query.Where(p => EF.Functions.ILike(p.Method, $"%{search}%")); // if not Npgsql, use .Contains(...)
-                }
-
-                var list = await query
-                    .OrderByDescending(p => p.Date)
-                    .Select(p => new PurchaseRowVM
-                    {
-                        Id      = p.ID,
-                        Date    = p.Date,
-                        Amount  = (decimal)p.Ammount,
-                        Status  = p.Status ?? "—",
-                        Method  = p.Method ?? "—",
-                        OrderId = p.Orders_ID
-                    })
-                    .ToListAsync();
-
-                _rows = new(list);
-                GridPayments.ItemsSource = _rows;
-
-                UpdateSummary();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to load purchase history:\n" + ex.Message, "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            MessageBox.Show("Please sign in to view your purchase history.", "Sign in required",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
         }
+
+        var userId = AppState.CurrentUser.ID;
+
+        // Convert DatePicker days -> UTC bounds for timestamptz
+        var fromUtc = ToUtcStartOfDay(FromPicker.SelectedDate);
+        var toUtc   = ToUtcEndOfDay(ToPicker.SelectedDate);
+
+        var status = (StatusBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "All";
+        var search = (SearchBox.Text ?? "").Trim();
+
+        await using var db = new ToolLendingContext();
+
+        var query = db.Payments
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(p => p.Borrow).ThenInclude(b => b.User)
+            .Where(p => p.Borrow != null && p.Borrow.User != null && p.Borrow.User.ID == userId);
+
+        if (fromUtc.HasValue) query = query.Where(p => p.Date >= fromUtc.Value);
+        if (toUtc.HasValue)   query = query.Where(p => p.Date <= toUtc.Value);
+
+        if (!string.Equals(status, "All", StringComparison.OrdinalIgnoreCase))
+            query = query.Where(p => p.Status == status);
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            if (Guid.TryParse(search, out var orderId))
+                query = query.Where(p => p.Orders_ID == orderId);
+            else
+                query = query.Where(p => EF.Functions.ILike(p.Method, $"%{search}%"));
+        }
+
+        var list = await query
+            .OrderByDescending(p => p.Date)
+            .Select(p => new PurchaseRowVM
+            {
+                Id      = p.ID,
+                Date    = p.Date,                   // Npgsql returns UTC for timestamptz
+                Amount  = (decimal)p.Ammount,
+                Status  = p.Status ?? "—",
+                Method  = p.Method ?? "—",
+                OrderId = p.Orders_ID
+            })
+            .ToListAsync();
+
+        _rows = new(list);
+        GridPayments.ItemsSource = _rows;
+
+        UpdateSummary();
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show("Failed to load purchase history:\n" + ex.Message, "Error",
+            MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+}
 
         private void UpdateSummary()
         {
@@ -130,6 +130,18 @@ namespace ToolRent.Views
                 sb.AppendLine($"Order ID:  {row.OrderId}");
                 MessageBox.Show(sb.ToString(), "Payment Details", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+        }
+        private static DateTime? ToUtcStartOfDay(DateTime? localDate)
+        {
+            if (!localDate.HasValue) return null;
+            var local = DateTime.SpecifyKind(localDate.Value.Date, DateTimeKind.Local);
+            return local.ToUniversalTime();
+        }
+        private static DateTime? ToUtcEndOfDay(DateTime? localDate)
+        {
+            if (!localDate.HasValue) return null;
+            var localEnd = DateTime.SpecifyKind(localDate.Value.Date.AddDays(1).AddTicks(-1), DateTimeKind.Local);
+            return localEnd.ToUniversalTime();
         }
     }
 

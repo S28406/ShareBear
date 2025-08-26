@@ -47,7 +47,7 @@
                 <Button Content="Rent Now"
                         Height="40" Width="140" Margin="8,0,0,0"
                         Background="#0B80F4" Foreground="White" FontWeight="Bold"
-                        HorizontalAlignment="Left"/>
+                        HorizontalAlignment="Left" Click="RentButtonClick"/>
             </DockPanel>
 
             <!-- Description & Reviews -->

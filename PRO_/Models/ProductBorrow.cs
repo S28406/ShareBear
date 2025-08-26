@@ -14,4 +14,6 @@ public class ProductBorrow
     [Required]
     public Guid Orders_ID { get; set; }
     public Borrow Order { get; set; }
+    [Required]
+    public int Quantity { get; set; }
 }
