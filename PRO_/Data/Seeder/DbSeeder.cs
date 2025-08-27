@@ -105,6 +105,7 @@ public static class DbSeeder
             Tool_ID = tools[0].ID,
             Added_at = DateTime.UtcNow
         });
+        context.SaveChanges();
         // Review
         context.Reviews.Add(new Review{
             ID = Guid.NewGuid(),
