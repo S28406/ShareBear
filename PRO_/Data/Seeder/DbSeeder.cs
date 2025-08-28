@@ -115,6 +115,14 @@ public static class DbSeeder
             ToolID = tools[0].ID,
             UserID = users[1].ID
             });
+        context.Reviews.Add(new Review{
+            ID = Guid.NewGuid(),
+            Rating = 3,
+            Description = "Great product",
+            Date = DateTime.UtcNow,
+            ToolID = tools[0].ID,
+            UserID = users[1].ID
+            });
         context.SaveChanges();
     }
 }
