@@ -6,6 +6,7 @@
         <Grid Margin="24">
             <Grid.RowDefinitions>
                 <!-- NEW: back bar -->
+                <!-- TODO: Add an average rating -->
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
