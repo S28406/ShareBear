@@ -1,26 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.EntityFrameworkCore;
-using PRO_;
-using PRO.Data.Context;
-using PRO.Models;
+using Pro.Client;
+using Pro.Client.Services;
+using Pro.Shared.Dtos;
 
 namespace ToolRent.Views
 {
     public partial class PaymentConfirmationPage : Page
     {
         private readonly Guid _borrowId;
-        private readonly decimal _total; 
+        private readonly decimal _total;
 
         public PaymentConfirmationPage(Guid borrowId, decimal total)
         {
             InitializeComponent();
-
             _borrowId = borrowId;
             _total = total;
 
@@ -38,10 +35,10 @@ namespace ToolRent.Views
             }
 
             OrderIdText.Text = $"Order ID: {_borrowId}";
-            UserText.Text    = $"User: {AppState.CurrentUser.Username}";
-            EmailText.Text   = $"Email: {AppState.CurrentUser.Email}";
+            UserText.Text = $"User: {AppState.CurrentUser.Username}";
+            EmailText.Text = $"Email: {AppState.CurrentUser.Email}";
             CreatedText.Text = $"Now: {DateTime.Now:g}";
-            TotalText.Text   = _total.ToString("C2", CultureInfo.CurrentCulture);
+            TotalText.Text = _total.ToString("C2", CultureInfo.CurrentCulture);
 
             await TryLoadItemsAsync();
             UpdateConfirmEnabled();
@@ -51,28 +48,8 @@ namespace ToolRent.Views
         {
             try
             {
-                await using var db = new ToolLendingContext();
-
-                var borrow = await db.Borrows
-                    .AsNoTracking()
-                    .Include(b => b.ProductBorrows)
-                        .ThenInclude(pb => pb.Tool)
-                    .FirstOrDefaultAsync(b => b.ID == _borrowId);
-
-                if (borrow?.ProductBorrows != null && borrow.ProductBorrows.Any())
-                {
-                    var names = borrow.ProductBorrows
-                        .Where(pb => pb.Tool != null)
-                        .Select(pb => pb.Tool.Name)
-                        .Distinct()
-                        .ToList();
-
-                    ItemsList.ItemsSource = names;
-                }
-                else
-                {
-                    ItemsList.ItemsSource = new List<string> { "—" };
-                }
+                var names = await Api.Instance.GetBorrowItemNamesAsync(_borrowId);
+                ItemsList.ItemsSource = names.Count > 0 ? names : new List<string> { "—" };
             }
             catch
             {
@@ -119,38 +96,14 @@ namespace ToolRent.Views
 
             var method = GetSelectedMethod();
             if (string.IsNullOrEmpty(method)) { ShowError("Please choose a payment method."); return; }
+
             var status = GetSuggestedStatus(method);
 
             try
             {
-                await using var db = new ToolLendingContext();
-
-                var borrow = await db.Borrows
-                    .Include(b => b.User)
-                    .FirstOrDefaultAsync(b => b.ID == _borrowId && b.User != null && b.User.ID == AppState.CurrentUser.ID);
-
-                if (borrow is null) { ShowError("Order not found or not accessible."); return; }
-
-                var payment = new Payment
-                {
-                    ID      = Guid.NewGuid(),
-                    Date    = DateTime.UtcNow,              
-                    Ammount = (float)_total,
-                    Status  = status,
-                    Method  = method,
-                    Borrow  = borrow,
-                    Orders_ID = borrow.ID
-                };
-
-                db.Payments.Add(payment);
-                await db.SaveChangesAsync();
-
+                await Api.Instance.ConfirmPaymentAsync(new PaymentConfirmRequestDto(_borrowId, _total, method, status));
                 MessageBox.Show("Payment confirmed.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 NavigationService?.Navigate(new History());
-            }
-            catch (DbUpdateException ex)
-            {
-                ShowError("Failed to confirm payment: " + (ex.InnerException?.Message ?? ex.Message));
             }
             catch (Exception ex)
             {

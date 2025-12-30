@@ -1,10 +1,8 @@
-﻿using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using Microsoft.EntityFrameworkCore;
-using PRO_;
-using PRO.Data.Context;
-using ToolRent.Security;
+using Pro.Client;
+using Pro.Client.Services;
+using Pro.Shared.Dtos;
 
 namespace ToolRent.Views
 {
@@ -17,7 +15,7 @@ namespace ToolRent.Views
             ErrorText.Visibility = Visibility.Collapsed;
 
             var input = UserOrEmailBox.Text.Trim();
-            var pass  = PasswordBox.Password;
+            var pass = PasswordBox.Password;
 
             if (string.IsNullOrWhiteSpace(input) || string.IsNullOrWhiteSpace(pass))
             {
@@ -25,28 +23,22 @@ namespace ToolRent.Views
                 return;
             }
 
-            using var db = new ToolLendingContext();
+            try
+            {
+                var auth = await Api.Instance.LoginAsync(new LoginRequestDto(input, pass));
+                AppState.Token = auth.Token;
+                AppState.CurrentUser = auth.User;
 
-            var user = await db.Users
-                .FirstOrDefaultAsync(u => u.Username == input || u.Email == input);
+                // Refresh header buttons if you want
+                if (Application.Current.MainWindow is ToolRent.MainWindow mw)
+                    mw.RefreshHeader();
 
-            if (user == null)
+                NavigationService?.Navigate(new ToolListPage());
+            }
+            catch
             {
                 ShowError("Invalid credentials.");
-                return;
             }
-
-            var ok = PasswordHelper.Verify(pass, user.PasswordSalt, user.PasswordHash);
-            if (!ok)
-            {
-                ShowError("Invalid credentials.");
-                return;
-            }
-
-            AppState.CurrentUser = user;
-
-            // Navigate to your main page (e.g., ToolListPage)
-            NavigationService?.Navigate(new ToolListPage());
         }
 
         private void GoToRegister_Click(object sender, RoutedEventArgs e)

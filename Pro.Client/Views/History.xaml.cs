@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;          
-using Microsoft.EntityFrameworkCore;
-using PRO_;
-using PRO.Data.Context;
+using System.Windows.Input;
+using Pro.Client.Services;
+using Pro.Shared.Dtos;
 
 namespace ToolRent.Views
 {
@@ -25,7 +24,7 @@ namespace ToolRent.Views
             GridPayments.ItemsSource = _rows;
 
             FromPicker.SelectedDate = DateTime.Today.AddDays(-90);
-            ToPicker.SelectedDate   = DateTime.Today;
+            ToPicker.SelectedDate = DateTime.Today;
 
             Loaded += async (_, __) => await LoadDataAsync();
         }
@@ -34,52 +33,36 @@ namespace ToolRent.Views
         {
             try
             {
-                if (AppState.CurrentUser is null)
-                {
-                    MessageBox.Show("Please sign in to view your purchase history.", "Sign in required",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
-                    return;
-                }
-
-                var userId = AppState.CurrentUser.ID;
-
                 var fromUtc = ToUtcStartOfDay(FromPicker.SelectedDate);
-                var toUtc   = ToUtcEndOfDay(ToPicker.SelectedDate);
+                var toUtc = ToUtcEndOfDay(ToPicker.SelectedDate);
 
                 var status = (StatusBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "All";
                 var search = (SearchBox.Text ?? "").Trim();
 
-                await using var db = new ToolLendingContext();
+                var list = await Api.Instance.GetPaymentHistoryAsync(fromUtc, toUtc);
 
-                var query = db.Payments
-                    .AsNoTracking()
-                    .AsSplitQuery()
-                    .Include(p => p.Borrow).ThenInclude(b => b.User)
-                    .Where(p => p.Borrow != null && p.Borrow.User != null && p.Borrow.User.ID == userId);
-
-                if (fromUtc.HasValue) query = query.Where(p => p.Date >= fromUtc.Value);
-                if (toUtc.HasValue)   query = query.Where(p => p.Date <= toUtc.Value);
-
+                // status filter (client-side)
                 if (!string.Equals(status, "All", StringComparison.OrdinalIgnoreCase))
-                    query = query.Where(p => p.Status == status);
+                    list = list.Where(p => string.Equals(p.Status, status, StringComparison.OrdinalIgnoreCase)).ToList();
 
+                // search filter (client-side)
                 if (!string.IsNullOrWhiteSpace(search))
-                    query = ApplySearch(query, search);
+                    list = ApplySearch(list, search);
 
-                var list = await query
+                var vm = list
                     .OrderByDescending(p => p.Date)
                     .Select(p => new PurchaseRowVM
                     {
-                        Id      = p.ID,
-                        Date    = p.Date,
-                        Amount  = (decimal)p.Ammount,
-                        Status  = p.Status ?? "—",
-                        Method  = p.Method ?? "—",
-                        OrderId = p.Borrow.ID
+                        Id = p.PaymentId,
+                        Date = p.Date,
+                        Amount = p.Amount,
+                        Status = p.Status ?? "—",
+                        Method = p.Method ?? "—",
+                        OrderId = p.OrderId
                     })
-                    .ToListAsync();
+                    .ToList();
 
-                _rows = new(list);
+                _rows = new ObservableCollection<PurchaseRowVM>(vm);
                 GridPayments.ItemsSource = _rows;
 
                 UpdateSummary();
@@ -91,47 +74,51 @@ namespace ToolRent.Views
             }
         }
 
-        private static IQueryable<PRO.Models.Payment> ApplySearch(IQueryable<PRO.Models.Payment> q, string search)
+        private static System.Collections.Generic.List<PaymentHistoryItemDto> ApplySearch(
+            System.Collections.Generic.IReadOnlyList<PaymentHistoryItemDto> items, string search)
         {
             var terms = search.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (var raw in terms)
+            return items.Where(p =>
             {
-                var term = raw.Trim();
-
-                if (Guid.TryParse(term, out var guid))
+                foreach (var raw in terms)
                 {
-                    q = q.Where(p => p.Orders_ID == guid || p.ID == guid);
-                    continue;
+                    var term = raw.Trim();
+
+                    if (Guid.TryParse(term, out var guid))
+                    {
+                        if (p.OrderId == guid || p.PaymentId == guid) continue;
+                        return false;
+                    }
+
+                    if (TryParseLocalDate(term, out var localDate))
+                    {
+                        var startUtc = ToUtcStartOfDay(localDate);
+                        var endUtc = ToUtcEndOfDay(localDate);
+                        if (startUtc.HasValue && endUtc.HasValue)
+                        {
+                            if (p.Date < startUtc.Value || p.Date > endUtc.Value) return false;
+                            continue;
+                        }
+                    }
+
+                    if (decimal.TryParse(term, NumberStyles.Any, CultureInfo.CurrentCulture, out var amtDec) ||
+                        decimal.TryParse(term, NumberStyles.Any, CultureInfo.InvariantCulture, out amtDec))
+                    {
+                        if (Math.Abs(p.Amount - amtDec) < 0.005m) continue;
+                        return false;
+                    }
+
+                    // text match
+                    if ((p.Method ?? "").Contains(term, StringComparison.OrdinalIgnoreCase)) continue;
+                    if ((p.Status ?? "").Contains(term, StringComparison.OrdinalIgnoreCase)) continue;
+                    if (p.OrderId.ToString().Contains(term, StringComparison.OrdinalIgnoreCase)) continue;
+
+                    return false;
                 }
 
-                if (TryParseLocalDate(term, out var localDate))
-                {
-                    var startUtc = ToUtcStartOfDay(localDate);
-                    var endUtc   = ToUtcEndOfDay(localDate);
-                    if (startUtc.HasValue && endUtc.HasValue)
-                        q = q.Where(p => p.Date >= startUtc.Value && p.Date <= endUtc.Value);
-                    continue;
-                }
-
-                if (decimal.TryParse(term, NumberStyles.Any, CultureInfo.CurrentCulture, out var amtDec) ||
-                    decimal.TryParse(term, NumberStyles.Any, CultureInfo.InvariantCulture, out amtDec))
-                {
-                    var amtF = (float)amtDec;
-                    q = q.Where(p => Math.Abs(p.Ammount - amtF) < 0.005f);
-                    continue;
-                }
-
-                var t = term;
-                q = q.Where(p =>
-                    EF.Functions.ILike(p.Method, $"%{t}%") ||
-                    EF.Functions.ILike(p.Status, $"%{t}%") ||
-                    p.Borrow.ProductBorrows.Any(pb => EF.Functions.ILike(pb.Tool.Name, $"%{t}%")) ||
-                    EF.Functions.ILike(p.Orders_ID.ToString(), $"%{t}%")
-                );
-            }
-
-            return q;
+                return true;
+            }).ToList();
         }
 
         private void UpdateSummary()
@@ -150,7 +137,7 @@ namespace ToolRent.Views
         private async void ResetFilters_Click(object sender, RoutedEventArgs e)
         {
             FromPicker.SelectedDate = DateTime.Today.AddDays(-90);
-            ToPicker.SelectedDate   = DateTime.Today;
+            ToPicker.SelectedDate = DateTime.Today;
             StatusBox.SelectedIndex = 0;
             SearchBox.Text = "";
             await LoadDataAsync();
@@ -158,8 +145,7 @@ namespace ToolRent.Views
 
         private async void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-                await LoadDataAsync();
+            if (e.Key == Key.Enter) await LoadDataAsync();
         }
 
         private void Details_Click(object sender, RoutedEventArgs e)
@@ -190,7 +176,7 @@ namespace ToolRent.Views
             return localEnd.ToUniversalTime();
         }
         private static DateTime? ToUtcStartOfDay(DateTime localDate) => ToUtcStartOfDay((DateTime?)localDate);
-        private static DateTime? ToUtcEndOfDay(DateTime localDate)   => ToUtcEndOfDay((DateTime?)localDate);
+        private static DateTime? ToUtcEndOfDay(DateTime localDate) => ToUtcEndOfDay((DateTime?)localDate);
 
         private static bool TryParseLocalDate(string s, out DateTime date)
         {

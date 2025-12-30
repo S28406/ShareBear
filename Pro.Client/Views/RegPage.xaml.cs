@@ -1,12 +1,8 @@
-﻿// ToolRent/Views/RegPage.xaml.cs
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.EntityFrameworkCore;
-using PRO.Data.Context;
-using PRO.Models;
-using ToolRent.Security;
+using Pro.Client.Services;
+using Pro.Shared.Dtos;
 
 namespace ToolRent.Views
 {
@@ -17,14 +13,14 @@ namespace ToolRent.Views
         private async void Register_Click(object sender, RoutedEventArgs e)
         {
             ErrorText.Visibility = Visibility.Collapsed;
-            var username = UsernameBox.Text.Trim();
-            var email    = EmailBox.Text.Trim();
-            var pass     = PasswordBox.Password;
-            var confirm  = ConfirmBox.Password;
 
-            // Basic validation
+            var username = UsernameBox.Text.Trim();
+            var email = EmailBox.Text.Trim();
+            var pass = PasswordBox.Password;
+            var confirm = ConfirmBox.Password;
+
             if (string.IsNullOrWhiteSpace(username) ||
-                string.IsNullOrWhiteSpace(email)    ||
+                string.IsNullOrWhiteSpace(email) ||
                 string.IsNullOrWhiteSpace(pass))
             {
                 ShowError("All fields are required.");
@@ -49,45 +45,24 @@ namespace ToolRent.Views
                 return;
             }
 
-            using var db = new ToolLendingContext();
-
-            // Uniqueness
-            var exists = await db.Users
-                .AnyAsync(u => u.Username == username || u.Email == email);
-
-            if (exists)
+            try
             {
-                ShowError("Username or Email already in use.");
-                return;
+                await Api.Instance.RegisterAsync(new RegisterRequestDto(username, email, pass));
+                MessageBox.Show("Account created. Please sign in.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                NavigationService?.Navigate(new LoginPage());
             }
-
-            // Hash + store
-            var (hash, salt) = PasswordHelper.Hash(pass);
-
-            var user = new User
+            catch (System.Exception ex)
             {
-                ID = Guid.NewGuid(),
-                Username = username,
-                Email = email,
-                PasswordHash = hash,
-                PasswordSalt = salt,
-                Role = "Customer"
-            };
-
-            db.Users.Add(user);
-            await db.SaveChangesAsync();
-
-            MessageBox.Show("Account created. Please sign in.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            NavigationService?.Navigate(new LoginPage());
+                ShowError("Registration failed: " + ex.Message);
+            }
         }
 
-        private void BackButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (NavigationService?.CanGoBack == true)
-                NavigationService.GoBack();
-            else
-                NavigationService?.Navigate(new ToolListPage());
+            if (NavigationService?.CanGoBack == true) NavigationService.GoBack();
+            else NavigationService?.Navigate(new ToolListPage());
         }
+
         private void GoToLogin_Click(object sender, RoutedEventArgs e)
             => NavigationService?.Navigate(new LoginPage());
 

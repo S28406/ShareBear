@@ -8,6 +8,10 @@ namespace ToolRent
 {
     public partial class MainWindow : Window
     {
+        public void RefreshHeader()
+        {
+            UpdateAddProductVisibility();
+        }
         public MainWindow()
         {
             InitializeComponent();

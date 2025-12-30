@@ -1,56 +1,51 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Microsoft.EntityFrameworkCore;
-using PRO.Data.Context;
-using PRO.Models;
+using Pro.Client.Services;
+using Pro.Shared.Dtos;
 
 namespace ToolRent.Views
 {
     public partial class ToolListPage : Page
     {
-        private readonly ToolLendingContext _context = new ToolLendingContext();
-
         public ToolListPage()
         {
             InitializeComponent();
-            Loaded += (_, __) => { LoadFilters(); LoadTools(); };
+            Loaded += async (_, __) =>
+            {
+                await LoadFiltersAsync();
+                await LoadToolsAsync();
+            };
         }
 
-        private void LoadFilters()
+        private async Task LoadFiltersAsync()
         {
             CategoryFilterComboBox.Items.Clear();
-            CategoryFilterComboBox.Items.Add("All");
-            foreach (var category in _context.Categories.OrderBy(c => c.Name))
-                CategoryFilterComboBox.Items.Add(category.Name);
-            CategoryFilterComboBox.SelectedIndex = 0;
-
             UserFilterComboBox.Items.Clear();
+
+            CategoryFilterComboBox.Items.Add("All");
             UserFilterComboBox.Items.Add("All");
-            foreach (var user in _context.Users.OrderBy(u => u.Username))
-                UserFilterComboBox.Items.Add(user.Username);
+
+            var filters = await Api.Instance.GetToolFiltersAsync();
+
+            foreach (var c in filters.Categories) CategoryFilterComboBox.Items.Add(c);
+            foreach (var o in filters.Owners) UserFilterComboBox.Items.Add(o);
+
+            CategoryFilterComboBox.SelectedIndex = 0;
             UserFilterComboBox.SelectedIndex = 0;
         }
 
-        private void LoadTools()
+        private async Task LoadToolsAsync()
         {
             string cat = CategoryFilterComboBox.SelectedItem?.ToString() ?? "All";
             string owner = UserFilterComboBox.SelectedItem?.ToString() ?? "All";
 
-            var q = _context.Tools
-                            .Include(t => t.Category)
-                            .Include(t => t.User)
-                            .AsQueryable();
-
-            if (cat != "All")   q = q.Where(t => t.Category.Name == cat);
-            if (owner != "All") q = q.Where(t => t.User.Username == owner);
-
-            var tools = q.ToList();
+            var tools = await Api.Instance.GetToolsAsync(cat, owner);
 
             ToolListPanel.Items.Clear();
 
@@ -66,19 +61,18 @@ namespace ToolRent.Views
                     BorderBrush = (Brush)new BrushConverter().ConvertFrom("#E7EDF4")!,
                     BorderThickness = new Thickness(1),
                     Cursor = Cursors.Hand,
-                    Tag = tool.ID
+                    Tag = tool.Id
                 };
 
                 var stack = new StackPanel();
                 card.Child = stack;
 
-                var image = new Image
+                stack.Children.Add(new Image
                 {
                     Height = 120,
                     Stretch = Stretch.UniformToFill,
                     Source = ResolveImage(tool.ImagePath)
-                };
-                stack.Children.Add(image);
+                });
 
                 stack.Children.Add(new TextBlock
                 {
@@ -97,9 +91,7 @@ namespace ToolRent.Views
                 });
 
                 card.MouseLeftButtonUp += (_, __) =>
-                {
                     NavigationService?.Navigate(new ToolDetailsPage((Guid)card.Tag));
-                };
 
                 ToolListPanel.Items.Add(card);
             }
@@ -113,8 +105,7 @@ namespace ToolRent.Views
                 var raw = (dbPath ?? "").Replace('/', '\\').Trim();
 
                 string fullPath;
-                if (Path.IsPathRooted(raw))
-                    fullPath = raw;
+                if (Path.IsPathRooted(raw)) fullPath = raw;
                 else
                 {
                     var p1 = Path.Combine(baseDir, raw);
@@ -137,9 +128,9 @@ namespace ToolRent.Views
             return new BitmapImage(new Uri("pack://application:,,,/Images/placeholder.jpg"));
         }
 
-        private void Filter_Changed(object sender, RoutedEventArgs e)
+        private async void Filter_Changed(object sender, RoutedEventArgs e)
         {
-            if (IsLoaded) LoadTools();
+            if (IsLoaded) await LoadToolsAsync();
         }
     }
 }
