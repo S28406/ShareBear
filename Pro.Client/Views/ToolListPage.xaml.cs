@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 using Pro.Client.Services;
 using Pro.Shared.Dtos;
 
-namespace ToolRent.Views
+namespace Pro.Client.Views
 {
     public partial class ToolListPage : Page
     {

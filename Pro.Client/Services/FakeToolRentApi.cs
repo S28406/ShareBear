@@ -1,6 +1,6 @@
 ﻿using Pro.Shared.Dtos;
 
-namespace Pro.Client.Services;
+namespace ToolRent.Services;
 
 public class FakeToolRentApi : IToolRentApi
 {
@@ -16,8 +16,8 @@ public class FakeToolRentApi : IToolRentApi
             new(Guid.Parse("22222222-2222-2222-2222-222222222222"), "Hammer", 9.99f, "hamer.jpg", "Hand Tools", "john"),
         };
 
-        var admin = new UserDto(Guid.NewGuid(), "admin", "admin@example.com", "Admin");
-        var john  = new UserDto(Guid.NewGuid(), "john",  "john@example.com",  "Customer");
+        var admin = new UserDtos(Guid.NewGuid(), "admin", "admin@example.com", "Admin");
+        var john  = new UserDtos(Guid.NewGuid(), "john",  "john@example.com",  "Customer");
 
         _details = new()
         {
@@ -46,8 +46,8 @@ public class FakeToolRentApi : IToolRentApi
     {
         // super fake: accept anything non-empty
         var user = req.UsernameOrEmail.Contains("admin", StringComparison.OrdinalIgnoreCase)
-            ? new UserDto(Guid.NewGuid(), "admin", "admin@example.com", "Admin")
-            : new UserDto(Guid.NewGuid(), "john", "john@example.com", "Customer");
+            ? new UserDtos(Guid.NewGuid(), "admin", "admin@example.com", "Admin")
+            : new UserDtos(Guid.NewGuid(), "john", "john@example.com", "Customer");
 
         return Task.FromResult(new AuthResponseDto("dev-token", user));
     }

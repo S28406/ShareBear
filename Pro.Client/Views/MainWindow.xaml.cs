@@ -1,10 +1,9 @@
 ﻿using System.Windows;
-using PRO_;
-using PRO.Security;
-using ToolRent.Views;
-using History = ToolRent.Views.History;
+using Pro.Shared.Security;
+using Pro.Client.Views;
+using History = Pro.Client.Views.History;
 
-namespace ToolRent
+namespace Pro.Client.Views
 {
     public partial class MainWindow : Window
     {

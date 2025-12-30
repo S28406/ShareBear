@@ -8,7 +8,7 @@ using Pro.Client;
 using Pro.Client.Services;
 using Pro.Shared.Dtos;
 
-namespace ToolRent.Views
+namespace Pro.Client.Views
 {
     public partial class ToolDetailsPage : Page
     {

@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using Pro.Client.Services;
 using Pro.Shared.Dtos;
 
-namespace ToolRent.Views
+namespace Pro.Client.Views
 {
     public partial class RegPage : Page
     {

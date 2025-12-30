@@ -1,4 +1,6 @@
-﻿namespace Pro.Client.Services;
+﻿using ToolRent.Services;
+
+namespace Pro.Client.Services;
 
 public static class Api
 {

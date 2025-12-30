@@ -4,6 +4,6 @@ namespace Pro.Client;
 
 public static class AppState
 {
-    public static UserDto? CurrentUser { get; set; }
+    public static UserDtos? CurrentUser { get; set; }
     public static string? Token { get; set; }
 }

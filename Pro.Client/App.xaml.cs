@@ -1,22 +1,8 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
-using PRO_.Data.Seeder;
-using PRO.Data.Context;
-using ToolRent;
+﻿using System.Windows;
 
-namespace PRO_
+namespace Pro.Client;
+
+public partial class App : Application
 {
-    public partial class App : Application
-    {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-
-            var context = new ToolLendingContext();
-            DbSeeder.Seed(context);
-            var mainWindow = new MainWindow();
-            mainWindow.Show();
-        }
-    }
+    // no OnStartup here
 }

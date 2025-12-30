@@ -4,7 +4,7 @@ using Pro.Client;
 using Pro.Client.Services;
 using Pro.Shared.Dtos;
 
-namespace ToolRent.Views
+namespace Pro.Client.Views
 {
     public partial class LoginPage : Page
     {
@@ -30,7 +30,7 @@ namespace ToolRent.Views
                 AppState.CurrentUser = auth.User;
 
                 // Refresh header buttons if you want
-                if (Application.Current.MainWindow is ToolRent.MainWindow mw)
+                if (Application.Current.MainWindow is Pro.Client.Views.MainWindow mw)
                     mw.RefreshHeader();
 
                 NavigationService?.Navigate(new ToolListPage());

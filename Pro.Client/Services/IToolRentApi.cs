@@ -1,6 +1,6 @@
 ﻿using Pro.Shared.Dtos;
 
-namespace Pro.Client.Services;
+namespace ToolRent.Services;
 
 public interface IToolRentApi
 {

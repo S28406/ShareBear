@@ -11,7 +11,7 @@ using System.Windows.Input;
 using Pro.Client.Services;
 using Pro.Shared.Dtos;
 
-namespace ToolRent.Views
+namespace Pro.Client.Views
 {
     public partial class History : Page
     {

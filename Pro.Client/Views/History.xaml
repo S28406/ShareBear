@@ -1,11 +1,12 @@
-﻿<Page x:Class="ToolRent.Views.History"
+﻿<Page x:Class="Pro.Client.Views.History"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="clr-namespace:ToolRent.Views"
+      xmlns:local="clr-namespace:Pro.Client.Views"
+      xmlns:views="clr-namespace:Pro.Client.Views"
       Title="Purchase History" Background="#F8FAFC">
 
     <Page.Resources>
-        <local:BoolToVisibilityInverseConverter x:Key="BoolToVisibilityInverseConverter"/>
+        <views:BoolToVisibilityInverseConverter x:Key="BoolToVisibilityInverseConverter"/>
     </Page.Resources>
 
     <Grid Background="#F8FAFC">
