@@ -1,0 +1,43 @@
+# ===== .NET / Visual Studio / Rider =====
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+*.DotSettings.user
+
+# Rider / JetBrains
+.idea/
+*.iml
+
+# ===== Build / publish artifacts =====
+artifacts/
+publish/
+TestResults/
+coverage/
+
+# ===== OS junk =====
+.DS_Store
+Thumbs.db
+
+# ===== Logs =====
+*.log
+
+# ===== EF / local settings =====
+# If you keep real secrets in dev settings, ignore them:
+appsettings.Development.json
+appsettings.*.Development.json
+secrets.json
+
+# ===== WPF generated =====
+*.g.cs
+*.g.i.cs
+
+# ===== Node (if any) =====
+node_modules/
