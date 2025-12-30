@@ -1,5 +1,4 @@
-﻿// ToolRent/Views/LoginPage.xaml.cs
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.EntityFrameworkCore;

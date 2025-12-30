@@ -34,7 +34,7 @@ public class ToolLendingContext : DbContext
         {
             e.HasOne(p => p.Borrow)
                 .WithMany(b => b.Payments)
-                .HasForeignKey(p => p.Orders_ID)          // use Orders_ID as FK
+                .HasForeignKey(p => p.Orders_ID)         
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

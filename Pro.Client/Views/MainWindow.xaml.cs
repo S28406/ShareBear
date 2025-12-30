@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using PRO_;
-using PRO.Models;
 using PRO.Security;
 using ToolRent.Views;
 using History = ToolRent.Views.History;
@@ -32,7 +31,7 @@ namespace ToolRent
                 return;
             }
             // TODO: Create new page
-            ContentFrame.Navigate(new ToolRent.Views.AddToolPage());
+            ContentFrame.Navigate(new PRO_.Views.AddToolPage());
         }
 
         private void GoLogin_Click(object sender, RoutedEventArgs e)
