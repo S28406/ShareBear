@@ -24,11 +24,11 @@ public class ToolLendingContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ProductBorrow>()
-            .HasKey(pb => new { Tool_ID = pb.Tools_ID, Order_ID = pb.Orders_ID });
-
-        modelBuilder.Entity<LendingPartner>()
-            .HasKey(lp => new { User_Id = lp.Users_Id, Partner_Id = lp.Partners_Id });
+        // modelBuilder.Entity<ProductBorrow>()
+        //     .HasKey(pb => new { Tool_ID = pb.Tools_ID, Order_ID = pb.Orders_ID });
+        //
+        // modelBuilder.Entity<LendingPartner>()
+        //     .HasKey(lp => new { User_Id = lp.Users_Id, Partner_Id = lp.Partners_Id });
         
         modelBuilder.Entity<Payment>(e =>
         {
@@ -113,9 +113,6 @@ public class ToolLendingContext : DbContext
         });
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=toollendingdb;Username=postgres;Password=admin");
-    }
-
+    public ToolLendingContext(DbContextOptions<ToolLendingContext> options) : base(options) { }
+    
 }

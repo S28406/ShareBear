@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <Folder Include="Pro.Client\" />
+    <Folder Include="Pro.Server\" />
   </ItemGroup>
 
 </Project>
