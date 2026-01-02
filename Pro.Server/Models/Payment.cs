@@ -6,7 +6,7 @@ public class Payment
 {
     [Key]
     [Required]
-    public Guid ID { get; set; }
+    public Guid Id { get; set; }
     [Required]
     [DataType(DataType.DateTime)]
     public DateTime Date { get; set; }
@@ -18,6 +18,6 @@ public class Payment
     public string Method { get; set; }
 
     [Required]
-    public Guid Orders_ID { get; set; }
+    public Guid OrdersId { get; set; }
     public Borrow Borrow { get; set; }
 }

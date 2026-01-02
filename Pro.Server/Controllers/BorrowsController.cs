@@ -26,15 +26,15 @@ public class BorrowsController : ControllerBase
     {
         var user = await GetCurrentUserAsync();
 
-        var tool = await _db.Tools.FirstOrDefaultAsync(t => t.ID == req.ToolId);
+        var tool = await _db.Tools.FirstOrDefaultAsync(t => t.Id == req.ToolId);
         if (tool is null) return NotFound("Tool not found");
         if (req.Quantity <= 0) return BadRequest("Quantity must be > 0");
         if (tool.Quantity < req.Quantity) return Conflict("Not enough quantity available");
 
         var borrow = new Borrow
         {
-            ID = Guid.NewGuid(),
-            Users_ID = user.ID,
+            Id = Guid.NewGuid(),
+            UsersId = user.Id,
             Status = "Pending",
             Date = DateTime.UtcNow,
             Price = tool.Price * req.Quantity
@@ -44,9 +44,9 @@ public class BorrowsController : ControllerBase
 
         var pb = new ProductBorrow
         {
-            ID = Guid.NewGuid(),
-            Orders_ID = borrow.ID,
-            Tools_ID  = tool.ID,
+            Id = Guid.NewGuid(),
+            BorrowId = borrow.Id,
+            ToolId  = tool.Id,
             Quantity  = req.Quantity
         };
 
@@ -57,14 +57,14 @@ public class BorrowsController : ControllerBase
 
         await _db.SaveChangesAsync();
 
-        return Ok(new CreateBorrowResponseDto(borrow.ID, (decimal)borrow.Price));
+        return Ok(new CreateBorrowResponseDto(borrow.Id, (decimal)borrow.Price));
     }
 
     [HttpGet("{borrowId:guid}/items")]
     public async Task<ActionResult<IReadOnlyList<string>>> GetBorrowItemNames(Guid borrowId)
     {
         var names = await _db.ProductBorrows
-            .Where(pb => pb.Orders_ID == borrowId)
+            .Where(pb => pb.BorrowId == borrowId)
             .Include(pb => pb.Tool)
             .Select(pb => pb.Tool.Name)
             .ToListAsync();

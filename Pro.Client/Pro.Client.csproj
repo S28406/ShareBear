@@ -36,11 +36,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Resource Include="Images\placeholder.jpg" />
+      <ProjectReference Include="..\Pro.Shared\Pro.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Pro.Shared\Pro.Shared.csproj" />
+      <Resource Include="Images\placeholder.jpg" />
     </ItemGroup>
 
 </Project>

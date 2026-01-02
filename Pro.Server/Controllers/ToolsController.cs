@@ -12,6 +12,15 @@ public class ToolsController : ControllerBase
     private readonly ToolLendingContext _db;
 
     public ToolsController(ToolLendingContext db) => _db = db;
+    
+    private static string Img(string? fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+            return "/images/placeholder.jpg";
+
+        fileName = Path.GetFileName(fileName); // safety (no folders)
+        return $"/images/{fileName}";
+    }
 
     [HttpGet("filters")]
     public async Task<ActionResult<ToolFiltersDto>> GetFilters()
@@ -48,10 +57,10 @@ public class ToolsController : ControllerBase
         var list = await q
             .OrderBy(t => t.Name)
             .Select(t => new ToolListItemDto(
-                t.ID,
+                t.Id,
                 t.Name,
                 t.Price,
-                t.ImagePath,
+                Img(t.ImagePath),
                 t.Category.Name,
                 t.User.Username
             ))
@@ -68,28 +77,28 @@ public class ToolsController : ControllerBase
             .Include(t => t.User)
             .Include(t => t.Reviews)
                 .ThenInclude(r => r.User)
-            .FirstOrDefaultAsync(t => t.ID == toolId);
+            .FirstOrDefaultAsync(t => t.Id == toolId);
 
         if (tool is null) return NotFound();
 
         var reviews = tool.Reviews
             .OrderByDescending(r => r.Date)
             .Select(r => new ReviewDto(
-                r.ID,
+                r.Id,
                 r.Rating,
                 r.Description,
                 r.Date,
-                new UserDtos(r.User.ID, r.User.Username, r.User.Email, r.User.Role)
+                new UserDtos(r.User.Id, r.User.Username, r.User.Email, r.User.Role)
             ))
             .ToList();
 
         var dto = new ToolDetailsDto(
-            tool.ID,
+            tool.Id,
             tool.Name,
             tool.Description,
             tool.Price,
             tool.Quantity,
-            tool.ImagePath,
+            Img(tool.ImagePath),
             tool.Category.Name,
             tool.User.Username,
             reviews

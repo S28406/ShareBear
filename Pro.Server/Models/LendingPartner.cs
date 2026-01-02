@@ -6,20 +6,20 @@ public class LendingPartner
 {
     [Key]
     [Required]
-    public Guid ID { get; set; }
+    public Guid Id { get; set; }
     [Required]
-    public string Partnership_Type { get; set; }
+    public string PartnershipType { get; set; }
     [Required]
     [DataType(DataType.Date)]
-    public DateTime Start_Date { get; set; }
+    public DateTime StartDate { get; set; }
     [Required]
-    public string Partner_Contract { get; set; }
+    public string PartnerContract { get; set; }
 
     [Required]
-    public Guid Users_Id { get; set; }
+    public Guid UsersId { get; set; }
     public User User { get; set; }
     
     [Required]
-    public Guid Partners_Id { get; set; }
+    public Guid PartnersId { get; set; }
     public User Partner { get; set; }
 }

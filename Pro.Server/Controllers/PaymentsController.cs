@@ -17,13 +17,13 @@ public class PaymentsController : ControllerBase
     [HttpPost("confirm")]
     public async Task<IActionResult> Confirm([FromBody] PaymentConfirmRequestDto req)
     {
-        var borrow = await _db.Borrows.FirstOrDefaultAsync(b => b.ID == req.BorrowId);
+        var borrow = await _db.Borrows.FirstOrDefaultAsync(b => b.Id == req.BorrowId);
         if (borrow is null) return NotFound("Borrow not found");
 
         var payment = new Payment
         {
-            ID = Guid.NewGuid(),
-            Orders_ID = borrow.ID,
+            Id = Guid.NewGuid(),
+            OrdersId = borrow.Id,
             Date = DateTime.UtcNow,
             Ammount = (float)req.Amount,
             Method = req.Method,
@@ -51,12 +51,12 @@ public class PaymentsController : ControllerBase
         var list = await q
             .OrderByDescending(p => p.Date)
             .Select(p => new PaymentHistoryItemDto(
-                p.ID,
+                p.Id,
                 p.Date,
                 (decimal)p.Ammount,
                 p.Status,
                 p.Method,
-                p.Orders_ID
+                p.OrdersId
             ))
             .ToListAsync();
 

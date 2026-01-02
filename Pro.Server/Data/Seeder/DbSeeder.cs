@@ -39,9 +39,9 @@ public static class DbSeeder
         var (johnHash,  johnSalt ) = PasswordHelper.Hash("password");
         var users = new List<User>
         {
-            new() { ID = Guid.NewGuid(), Username = "admin", Email = "admin@example.com", PasswordHash = adminHash,
+            new() { Id = Guid.NewGuid(), Username = "admin", Email = "admin@example.com", PasswordHash = adminHash,
                 PasswordSalt = adminSalt, Role = "Admin" },
-            new() { ID = Guid.NewGuid(), Username = "john",  Email = "john@example.com",  PasswordHash = adminHash,
+            new() { Id = Guid.NewGuid(), Username = "john",  Email = "john@example.com",  PasswordHash = adminHash,
                 PasswordSalt = adminSalt,  Role = "Customer" }
         };
         context.Users.AddRange(users);
@@ -50,9 +50,9 @@ public static class DbSeeder
         // CATEGORIES
         var categories = new List<Category>
         {
-            new() { ID = Guid.NewGuid(), Name = "Power Tools", Description = "Electric or battery-powered tools" },
-            new() { ID = Guid.NewGuid(), Name = "Hand Tools",  Description = "Manual tools for general use" },
-            new() { ID = Guid.NewGuid(), Name = "Stations",  Description = "Big stations for industrial use" }
+            new() { Id = Guid.NewGuid(), Name = "Power Tools", Description = "Electric or battery-powered tools" },
+            new() { Id = Guid.NewGuid(), Name = "Hand Tools",  Description = "Manual tools for general use" },
+            new() { Id = Guid.NewGuid(), Name = "Stations",  Description = "Big stations for industrial use" }
             
         };
         context.Categories.AddRange(categories);
@@ -63,23 +63,23 @@ public static class DbSeeder
         {
             new()
             {
-                ID = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 Name = "Cordless Drill", Description = "18V cordless power drill",
-                Price = 49.99f, Quantity = 10, Users_ID = users[0].ID, CategoryId = categories[0].ID,
+                Price = 49.99f, Quantity = 10, UsersId = users[0].Id, CategoryId = categories[0].Id,
                 ImagePath = "Drill.jpg"
             },
             new()
             {
-                ID = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 Name = "Hammer", Description = "Heavy duty hammer",
-                Price = 9.99f, Quantity = 20, Users_ID = users[1].ID, CategoryId = categories[1].ID,
+                Price = 9.99f, Quantity = 20, UsersId = users[1].Id, CategoryId = categories[1].Id,
                 ImagePath = "hamer.jpg"
             },
             new()
             {
-                ID = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 Name = "Band saw machine", Description = " ",
-                Price = 100f, Quantity = 1, Users_ID = users[1].ID, CategoryId = categories[2].ID,
+                Price = 100f, Quantity = 1, UsersId = users[1].Id, CategoryId = categories[2].Id,
                 ImagePath = "band_saw_machine.jpg"
             }
         };
@@ -89,10 +89,10 @@ public static class DbSeeder
         // ACCESSORIES
         var accessories = new List<ToolAccessory>
         {
-            new() { ID = Guid.NewGuid(), Name = "Drill Bits", Description = "Assorted drill bits",
-                Quantity_Available = 50, Tool_ID = tools[0].ID },
-            new() { ID = Guid.NewGuid(), Name = "Nails",      Description = "Box of 100 nails",
-                Quantity_Available = 100, Tool_ID = tools[1].ID }
+            new() { Id = Guid.NewGuid(), Name = "Drill Bits", Description = "Assorted drill bits",
+                QuantityAvailable = 50, ToolId = tools[0].Id },
+            new() { Id = Guid.NewGuid(), Name = "Nails",      Description = "Box of 100 nails",
+                QuantityAvailable = 100, ToolId = tools[1].Id }
         };
         context.ToolAccessories.AddRange(accessories);
         context.SaveChanges();
@@ -100,28 +100,28 @@ public static class DbSeeder
         // HISTORY
         context.Histories.Add(new History
         {
-            ID = Guid.NewGuid(),
-            UserID = users[1].ID,
-            Tool_ID = tools[0].ID,
-            Added_at = DateTime.UtcNow
+            Id = Guid.NewGuid(),
+            UserId = users[1].Id,
+            ToolId = tools[0].Id,
+            AddedAt = DateTime.UtcNow
         });
         context.SaveChanges();
         // Review
         context.Reviews.Add(new Review{
-            ID = Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Rating = 5,
             Description = "Great product",
             Date = DateTime.UtcNow,
-            ToolID = tools[0].ID,
-            UserID = users[1].ID
+            ToolId = tools[0].Id,
+            UserId = users[1].Id
             });
         context.Reviews.Add(new Review{
-            ID = Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Rating = 3,
             Description = "Great product",
             Date = DateTime.UtcNow,
-            ToolID = tools[0].ID,
-            UserID = users[1].ID
+            ToolId = tools[0].Id,
+            UserId = users[1].Id
             });
         context.SaveChanges();
     }

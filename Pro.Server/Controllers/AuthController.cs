@@ -28,10 +28,10 @@ public class AuthController : ControllerBase
         if (!PasswordHelper.Verify(req.Password, user.PasswordSalt, user.PasswordHash))
             return Unauthorized("Invalid credentials");
 
-        var dtoUser = new UserDtos(user.ID, user.Username, user.Email, user.Role);
+        var dtoUser = new UserDtos(user.Id, user.Username, user.Email, user.Role);
 
         // DEV TOKEN (replace with JWT later)
-        var token = user.ID.ToString();
+        var token = user.Id.ToString();
 
         return Ok(new AuthResponseDto(token, dtoUser));
     }
@@ -47,7 +47,7 @@ public class AuthController : ControllerBase
 
         var user = new User
         {
-            ID = Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Username = req.Username,
             Email = req.Email,
             PasswordHash = hash,

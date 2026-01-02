@@ -6,7 +6,7 @@ public class Return
 {
     [Key]
     [Required]
-    public Guid ID { get; set; }
+    public Guid Id { get; set; }
     [Required]
     [DataType(DataType.DateTime)]
     public DateTime Date { get; set; }
@@ -16,6 +16,6 @@ public class Return
     public string Damage { get; set; }
 
     [Required]
-    public Guid Borrows_ID { get; set; }
+    public Guid BorrowsId { get; set; }
     public Borrow Borrow { get; set; }
 }

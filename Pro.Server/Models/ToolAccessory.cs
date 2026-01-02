@@ -6,15 +6,15 @@ public class ToolAccessory
 {
     [Key]
     [Required]
-    public Guid ID { get; set; }
+    public Guid Id { get; set; }
     [Required]
     public string Name { get; set; }
     [Required]
     public string Description { get; set; }
     [Required]
-    public int Quantity_Available { get; set; }
+    public int QuantityAvailable { get; set; }
 
     [Required]
-    public Guid Tool_ID { get; set; }
+    public Guid ToolId { get; set; }
     public Tool Tool { get; set; }
 }

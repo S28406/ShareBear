@@ -15,7 +15,7 @@ namespace Pro.Client.Views
 {
     public partial class History : Page
     {
-        private ObservableCollection<PurchaseRowVM> _rows = new();
+        private ObservableCollection<PurchaseRowVm> _rows = new();
 
         public History()
         {
@@ -51,7 +51,7 @@ namespace Pro.Client.Views
 
                 var vm = list
                     .OrderByDescending(p => p.Date)
-                    .Select(p => new PurchaseRowVM
+                    .Select(p => new PurchaseRowVm
                     {
                         Id = p.PaymentId,
                         Date = p.Date,
@@ -62,7 +62,7 @@ namespace Pro.Client.Views
                     })
                     .ToList();
 
-                _rows = new ObservableCollection<PurchaseRowVM>(vm);
+                _rows = new ObservableCollection<PurchaseRowVm>(vm);
                 GridPayments.ItemsSource = _rows;
 
                 UpdateSummary();
@@ -150,7 +150,7 @@ namespace Pro.Client.Views
 
         private void Details_Click(object sender, RoutedEventArgs e)
         {
-            if (((FrameworkElement)sender).DataContext is PurchaseRowVM row)
+            if (((FrameworkElement)sender).DataContext is PurchaseRowVm row)
             {
                 var sb = new StringBuilder();
                 sb.AppendLine($"Date:      {row.Date:yyyy-MM-dd HH:mm}");
@@ -185,7 +185,7 @@ namespace Pro.Client.Views
         }
     }
 
-    public class PurchaseRowVM
+    public class PurchaseRowVm
     {
         public Guid Id { get; set; }
         public DateTime Date { get; set; }

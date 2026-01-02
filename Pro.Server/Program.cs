@@ -31,6 +31,8 @@ if (app.Environment.IsDevelopment())
     DbSeeder.Seed(db);
 }
 
+app.UseStaticFiles();
+
 app.MapControllers();
 
 app.Run();

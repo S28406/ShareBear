@@ -6,14 +6,16 @@ public class ProductBorrow
 {
     [Key]
     [Required]
-    public Guid ID { get; set; }
-    [Required]
-    public Guid Tools_ID { get; set; }
-    public Tool Tool { get; set; }
+    public Guid Id { get; set; }
 
     [Required]
-    public Guid Orders_ID { get; set; }
-    public Borrow Order { get; set; }
+    public Guid ToolId { get; set; }
+    public Tool Tool { get; set; } = null!;
+
+    [Required]
+    public Guid BorrowId { get; set; }
+    public Borrow Borrow { get; set; } = null!;
+
     [Required]
     public int Quantity { get; set; }
 }

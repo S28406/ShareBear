@@ -6,13 +6,13 @@ public class Schedule
 {
     [Key]
     [Required]
-    public Guid ID { get; set; }
+    public Guid Id { get; set; }
     [Required]
-    public DateTime Available_from { get; set; }
+    public DateTime AvailableFrom { get; set; }
     [Required]
-    public DateTime Available_to { get; set; }
+    public DateTime AvailableTo { get; set; }
 
     [Required]
-    public Guid Tools_ID { get; set; }
+    public Guid ToolsId { get; set; }
     public Tool Tool { get; set; }
 }

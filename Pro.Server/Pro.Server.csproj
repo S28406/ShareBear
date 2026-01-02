@@ -22,4 +22,18 @@
       <ProjectReference Include="..\Pro.Shared\Pro.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\Images\band_saw_machine.jpg" />
+      <None Include="wwwroot\Images\Drill.jpg" />
+      <None Include="wwwroot\Images\hamer.jpg" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Resource Include="wwwroot\Images\placeholder.jpg" />
+    </ItemGroup>
+
 </Project>

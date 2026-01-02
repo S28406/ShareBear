@@ -6,16 +6,16 @@ public class History
 {
     [Key]
     [Required]
-    public Guid ID { get; set; }
+    public Guid Id { get; set; }
     [Required]
     [DataType(DataType.DateTime)]
-    public DateTime Added_at { get; set; }
+    public DateTime AddedAt { get; set; }
 
     [Required]
-    public Guid Tool_ID { get; set; }
+    public Guid ToolId { get; set; }
     public Tool Tool { get; set; }
 
     [Required]
-    public Guid UserID { get; set; }
+    public Guid UserId { get; set; }
     public User User { get; set; }
 }

@@ -6,7 +6,7 @@ public class Event
 {
     [Key]
     [Required]
-    public Guid ID { get; set; }
+    public Guid Id { get; set; }
     [Required]
     [DataType(DataType.DateTime)]
     public DateTime Date { get; set; }
@@ -16,6 +16,6 @@ public class Event
     public string Description { get; set; }
 
     [Required]
-    public Guid Organizers_ID { get; set; }
+    public Guid OrganizersId { get; set; }
     public User Organizer { get; set; }
 }

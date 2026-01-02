@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PRO.Data.Context;
@@ -11,9 +12,11 @@ using PRO.Data.Context;
 namespace PRO_.Migrations
 {
     [DbContext(typeof(ToolLendingContext))]
-    partial class ToolLendingContextModelSnapshot : ModelSnapshot
+    [Migration("20260102165542_FixedNamingEverywhere_6try_")]
+    partial class FixedNamingEverywhere_6try_
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -234,7 +237,10 @@ namespace PRO_.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("BorrowId")
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrdersId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
@@ -245,9 +251,12 @@ namespace PRO_.Migrations
                     b.Property<Guid>("ToolId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ToolsId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("BorrowId");
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ToolId");
 
@@ -555,9 +564,9 @@ namespace PRO_.Migrations
 
             modelBuilder.Entity("PRO.Models.ProductBorrow", b =>
                 {
-                    b.HasOne("PRO.Models.Borrow", "Borrow")
+                    b.HasOne("PRO.Models.Borrow", "Order")
                         .WithMany("ProductBorrows")
-                        .HasForeignKey("BorrowId")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -567,7 +576,7 @@ namespace PRO_.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Borrow");
+                    b.Navigation("Order");
 
                     b.Navigation("Tool");
                 });

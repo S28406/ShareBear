@@ -24,76 +24,80 @@ public class ToolLendingContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder.Entity<ProductBorrow>()
-        //     .HasKey(pb => new { Tool_ID = pb.Tools_ID, Order_ID = pb.Orders_ID });
-        //
-        // modelBuilder.Entity<LendingPartner>()
-        //     .HasKey(lp => new { User_Id = lp.Users_Id, Partner_Id = lp.Partners_Id });
+        modelBuilder.Entity<ProductBorrow>()
+            .HasOne(pb => pb.Borrow)
+            .WithMany(b => b.ProductBorrows)
+            .HasForeignKey(pb => pb.BorrowId);
+
+        modelBuilder.Entity<ProductBorrow>()
+            .HasOne(pb => pb.Tool)
+            .WithMany()
+            .HasForeignKey(pb => pb.ToolId);
         
         modelBuilder.Entity<Payment>(e =>
         {
             e.HasOne(p => p.Borrow)
                 .WithMany(b => b.Payments)
-                .HasForeignKey(p => p.Orders_ID)         
+                .HasForeignKey(p => p.OrdersId)         
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<User>()
             .HasMany(u => u.Tools)
             .WithOne(t => t.User)
-            .HasForeignKey(t => t.Users_ID);
+            .HasForeignKey(t => t.UsersId);
 
         modelBuilder.Entity<User>()
             .HasMany(u => u.Borrows)
             .WithOne(b => b.User)
-            .HasForeignKey(b => b.Users_ID);
+            .HasForeignKey(b => b.UsersId);
 
         modelBuilder.Entity<Tool>()
             .HasMany(t => t.Schedules)
             .WithOne(s => s.Tool)
-            .HasForeignKey(s => s.Tools_ID);
+            .HasForeignKey(s => s.ToolsId);
 
         modelBuilder.Entity<Tool>()
             .HasMany(t => t.Accessories)
             .WithOne(ta => ta.Tool)
-            .HasForeignKey(ta => ta.Tool_ID);
+            .HasForeignKey(ta => ta.ToolId);
 
         modelBuilder.Entity<Tool>()
             .HasMany(t => t.Histories)
             .WithOne(h => h.Tool)
-            .HasForeignKey(h => h.Tool_ID);
+            .HasForeignKey(h => h.ToolId);
 
         modelBuilder.Entity<Tool>()
             .HasMany(t => t.SecurityDeposits)
             .WithOne(sd => sd.Tool)
-            .HasForeignKey(sd => sd.Tools_ID);
+            .HasForeignKey(sd => sd.ToolsId);
 
         modelBuilder.Entity<Tool>()
             .HasMany(t => t.Reviews)
             .WithOne(r => r.Tool)
-            .HasForeignKey(r => r.ToolID);
+            .HasForeignKey(r => r.ToolId);
 
         modelBuilder.Entity<Return>()
             .HasOne(r => r.Borrow)
             .WithMany(b => b.Returns)
-            .HasForeignKey(r => r.Borrows_ID);
+            .HasForeignKey(r => r.BorrowsId);
         
         
-        modelBuilder.Entity<Borrow>().HasKey(u => u.ID);
-        modelBuilder.Entity<Category>().HasKey(u => u.ID);
-        modelBuilder.Entity<Event>().HasKey(u => u.ID);
-        modelBuilder.Entity<History>().HasKey(u => u.ID);
-        modelBuilder.Entity<LendingPartner>().HasKey(u => u.ID);
-        modelBuilder.Entity<Notification>().HasKey(u => u.ID);
-        modelBuilder.Entity<Payment>().HasKey(u => u.ID);
-        modelBuilder.Entity<ProductBorrow>().HasKey(u => u.ID);
-        modelBuilder.Entity<Return>().HasKey(u => u.ID);
-        modelBuilder.Entity<Review>().HasKey(u => u.ID);
-        modelBuilder.Entity<Schedule>().HasKey(u => u.ID);
-        modelBuilder.Entity<SecurityDeposit>().HasKey(u => u.ID);
-        modelBuilder.Entity<Tool>().HasKey(u => u.ID);
-        modelBuilder.Entity<ToolAccessory>().HasKey(u => u.ID);
-        modelBuilder.Entity<User>().HasKey(u => u.ID);
+        modelBuilder.Entity<Borrow>().HasKey(u => u.Id);
+        modelBuilder.Entity<Category>().HasKey(u => u.Id);
+        modelBuilder.Entity<Event>().HasKey(u => u.Id);
+        modelBuilder.Entity<History>().HasKey(u => u.Id);
+        modelBuilder.Entity<LendingPartner>().HasKey(u => u.Id);
+        modelBuilder.Entity<Notification>().HasKey(u => u.Id);
+        modelBuilder.Entity<Payment>().HasKey(u => u.Id);
+        modelBuilder.Entity<ProductBorrow>().HasKey(u => u.Id);
+        modelBuilder.Entity<Return>().HasKey(u => u.Id);
+        modelBuilder.Entity<Review>().HasKey(u => u.Id);
+        modelBuilder.Entity<Schedule>().HasKey(u => u.Id);
+        modelBuilder.Entity<SecurityDeposit>().HasKey(u => u.Id);
+        modelBuilder.Entity<Tool>().HasKey(u => u.Id);
+        modelBuilder.Entity<ToolAccessory>().HasKey(u => u.Id);
+        modelBuilder.Entity<User>().HasKey(u => u.Id);
         
         
         modelBuilder.Entity<User>()

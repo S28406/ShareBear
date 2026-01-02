@@ -6,7 +6,7 @@ public class Review
 {
     [Key]
     [Required]
-    public Guid ID { get; set; }
+    public Guid Id { get; set; }
     [Required]
     public int Rating { get; set; }
     [Required]
@@ -16,10 +16,10 @@ public class Review
     public DateTime Date { get; set; }
 
     [Required]
-    public Guid ToolID { get; set; }
+    public Guid ToolId { get; set; }
     public Tool Tool { get; set; }
 
     [Required]
-    public Guid UserID { get; set; }
+    public Guid UserId { get; set; }
     public User User { get; set; }
 }
