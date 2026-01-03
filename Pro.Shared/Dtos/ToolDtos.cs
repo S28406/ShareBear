@@ -30,3 +30,21 @@ public record ToolDetailsDto(
     string OwnerUsername,
     IReadOnlyList<ReviewDto> Reviews
 );
+
+public record CreateToolRequestDto(
+    string Name,
+    string Description,
+    float Price,
+    int Quantity,
+    Guid CategoryId,
+    string? ImageFileName
+);
+
+public record UpdateToolRequestDto(
+    string Name,
+    string Description,
+    float Price,
+    int Quantity,
+    Guid CategoryId,
+    string? ImageFileName
+);

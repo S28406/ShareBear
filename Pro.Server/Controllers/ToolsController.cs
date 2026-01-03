@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using PRO.Data.Context;
 using Pro.Shared.Dtos;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Pro.Server.Controllers;
 
@@ -20,6 +22,20 @@ public class ToolsController : ControllerBase
 
         fileName = Path.GetFileName(fileName); // safety (no folders)
         return $"/images/{fileName}";
+    }
+    
+    private Guid CurrentUserId()
+        => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    private bool IsAdmin()
+        => User.IsInRole("Admin");
+
+    private static string NormalizeImage(string? fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+            return "placeholder.jpg"; // stored in DB; API will map to /images/placeholder.jpg
+
+        return Path.GetFileName(fileName);
     }
 
     [HttpGet("filters")]
@@ -106,4 +122,92 @@ public class ToolsController : ControllerBase
 
         return Ok(dto);
     }
+    
+    [Authorize(Roles = "Seller,Admin")]
+    [HttpPost]
+    public async Task<ActionResult<ToolDetailsDto>> CreateTool([FromBody] CreateToolRequestDto req)
+    {
+        if (string.IsNullOrWhiteSpace(req.Name))
+            return BadRequest("Name is required.");
+
+        if (req.Price < 0) return BadRequest("Price must be >= 0.");
+        if (req.Quantity < 0) return BadRequest("Quantity must be >= 0.");
+
+        var categoryExists = await _db.Categories.AnyAsync(c => c.Id == req.CategoryId);
+        if (!categoryExists)
+            return BadRequest("CategoryId not found.");
+
+        var userId = CurrentUserId();
+
+        var tool = new PRO.Models.Tool
+        {
+            Id = Guid.NewGuid(),
+            Name = req.Name.Trim(),
+            Description = req.Description?.Trim() ?? "",
+            Price = req.Price,
+            Quantity = req.Quantity,
+            CategoryId = req.CategoryId,
+            UsersId = userId,
+            ImagePath = NormalizeImage(req.ImageFileName)
+        };
+
+        _db.Tools.Add(tool);
+        await _db.SaveChangesAsync();
+
+        // Return details using your existing GetTool logic pattern:
+        return CreatedAtAction(nameof(GetTool), new { toolId = tool.Id }, await GetTool(tool.Id));
+    }
+    
+    [Authorize(Roles = "Seller,Admin")]
+    [HttpPut("{toolId:guid}")]
+    public async Task<IActionResult> UpdateTool(Guid toolId, [FromBody] UpdateToolRequestDto req)
+    {
+        var tool = await _db.Tools.FirstOrDefaultAsync(t => t.Id == toolId);
+        if (tool is null) return NotFound();
+
+        var userId = CurrentUserId();
+
+        // Ownership check: sellers can only edit their own tools; admin can edit all
+        if (!IsAdmin() && tool.UsersId != userId)
+            return Forbid();
+
+        var categoryExists = await _db.Categories.AnyAsync(c => c.Id == req.CategoryId);
+        if (!categoryExists)
+            return BadRequest("CategoryId not found.");
+
+        tool.Name = req.Name.Trim();
+        tool.Description = req.Description?.Trim() ?? "";
+        tool.Price = req.Price;
+        tool.Quantity = req.Quantity;
+        tool.CategoryId = req.CategoryId;
+        tool.ImagePath = NormalizeImage(req.ImageFileName);
+
+        await _db.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Seller,Admin")]
+    [HttpGet("mine")]
+    public async Task<ActionResult<IReadOnlyList<ToolListItemDto>>> GetMyTools()
+    {
+        var userId = CurrentUserId();
+
+        var list = await _db.Tools
+            .Include(t => t.Category)
+            .Include(t => t.User)
+            .Where(t => t.UsersId == userId)
+            .OrderBy(t => t.Name)
+            .Select(t => new ToolListItemDto(
+                t.Id,
+                t.Name,
+                t.Price,
+                Img(t.ImagePath),
+                t.Category.Name,
+                t.User.Username
+            ))
+            .ToListAsync();
+
+        return Ok(list);
+    }
+
 }

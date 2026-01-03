@@ -4,6 +4,12 @@ using PRO.Data.Context;
 using PRO.Models;
 using Pro.Shared.Dtos;
 using ToolRent.Security;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Pro.Server.Controllers;
 
@@ -14,6 +20,36 @@ public class AuthController : ControllerBase
     private readonly ToolLendingContext _db;
 
     public AuthController(ToolLendingContext db) => _db = db;
+    private string CreateJwt(User user)
+    {
+        var jwt = HttpContext.RequestServices
+            .GetRequiredService<IConfiguration>()
+            .GetSection("Jwt");
+
+        var issuer = jwt["Issuer"];
+        var audience = jwt["Audience"];
+        var key = jwt["Key"] ?? throw new InvalidOperationException("Jwt:Key missing");
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.Username),
+            new(ClaimTypes.Role, user.Role),
+        };
+
+        var creds = new SigningCredentials(
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+            SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: issuer,
+            audience: audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(8),
+            signingCredentials: creds);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
 
     [HttpPost("login")]
     public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginRequestDto req)
@@ -30,8 +66,7 @@ public class AuthController : ControllerBase
 
         var dtoUser = new UserDtos(user.Id, user.Username, user.Email, user.Role);
 
-        // DEV TOKEN (replace with JWT later)
-        var token = user.Id.ToString();
+        var token = CreateJwt(user);
 
         return Ok(new AuthResponseDto(token, dtoUser));
     }
@@ -59,5 +94,19 @@ public class AuthController : ControllerBase
         await _db.SaveChangesAsync();
 
         return NoContent();
+    }
+    
+    
+    // TODO: Remove this endpoint its only for testing 
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult Me()
+    {
+        return Ok(new
+        {
+            userId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+            username = User.Identity?.Name,
+            role = User.FindFirstValue(ClaimTypes.Role)
+        });
     }
 }
