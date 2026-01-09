@@ -13,7 +13,13 @@ public interface IToolRentApi
 
     // Tools
     Task<ToolFiltersDto> GetToolFiltersAsync();
-    Task<IReadOnlyList<ToolListItemDto>> GetToolsAsync(string category, string owner);
+    Task<IReadOnlyList<ToolListItemDto>> GetToolsAsync(
+        string category,
+        string owner,
+        float? minPrice = null,
+        float? maxPrice = null,
+        string? location = null
+    );
     Task<IReadOnlyList<ToolListItemDto>> GetMyToolsAsync();
     Task<ToolDetailsDto?> GetToolAsync(Guid toolId);
     Task<ToolDetailsDto> CreateToolAsync(CreateToolRequestDto req);

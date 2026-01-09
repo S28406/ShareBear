@@ -25,24 +25,37 @@ public static class DbSeeder
         context.Users.RemoveRange(context.Users);
 
         context.SaveChanges();
-
         context.ChangeTracker.Clear();
     }
 
     public static void Seed(ToolLendingContext context)
     {
-        Clean(context); 
+        Clean(context);
 
         // USERS
-        
         var (adminHash, adminSalt) = PasswordHelper.Hash("admin123");
-        var (johnHash,  johnSalt ) = PasswordHelper.Hash("password");
+        var (johnHash, johnSalt) = PasswordHelper.Hash("password");
+
         var users = new List<User>
         {
-            new() { Id = Guid.NewGuid(), Username = "admin", Email = "admin@example.com", PasswordHash = adminHash,
-                PasswordSalt = adminSalt, Role = "Admin" },
-            new() { Id = Guid.NewGuid(), Username = "john",  Email = "john@example.com",  PasswordHash = adminHash,
-                PasswordSalt = adminSalt,  Role = "Customer" }
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Username = "admin",
+                Email = "admin@example.com",
+                PasswordHash = adminHash,
+                PasswordSalt = adminSalt,
+                Role = "Admin"
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Username = "john",
+                Email = "john@example.com",
+                PasswordHash = johnHash,
+                PasswordSalt = johnSalt,
+                Role = "Customer"
+            }
         };
         context.Users.AddRange(users);
         context.SaveChanges();
@@ -52,8 +65,7 @@ public static class DbSeeder
         {
             new() { Id = Guid.NewGuid(), Name = "Power Tools", Description = "Electric or battery-powered tools" },
             new() { Id = Guid.NewGuid(), Name = "Hand Tools",  Description = "Manual tools for general use" },
-            new() { Id = Guid.NewGuid(), Name = "Stations",  Description = "Big stations for industrial use" }
-            
+            new() { Id = Guid.NewGuid(), Name = "Stations",    Description = "Big stations for industrial use" }
         };
         context.Categories.AddRange(categories);
         context.SaveChanges();
@@ -64,23 +76,38 @@ public static class DbSeeder
             new()
             {
                 Id = Guid.NewGuid(),
-                Name = "Cordless Drill", Description = "18V cordless power drill",
-                Price = 49.99f, Quantity = 10, UsersId = users[0].Id, CategoryId = categories[0].Id,
-                ImagePath = "Drill.jpg"
+                Name = "Cordless Drill",
+                Description = "18V cordless power drill",
+                Price = 49.99f,
+                Quantity = 10,
+                UsersId = users[0].Id,
+                CategoryId = categories[0].Id,
+                ImagePath = "Drill.jpg",
+                Location = "Warsaw"
             },
             new()
             {
                 Id = Guid.NewGuid(),
-                Name = "Hammer", Description = "Heavy duty hammer",
-                Price = 9.99f, Quantity = 20, UsersId = users[1].Id, CategoryId = categories[1].Id,
-                ImagePath = "hamer.jpg"
+                Name = "Hammer",
+                Description = "Heavy duty hammer",
+                Price = 9.99f,
+                Quantity = 20,
+                UsersId = users[1].Id,
+                CategoryId = categories[1].Id,
+                ImagePath = "hamer.jpg",
+                Location = "Krakow"
             },
             new()
             {
                 Id = Guid.NewGuid(),
-                Name = "Band saw machine", Description = " ",
-                Price = 100f, Quantity = 1, UsersId = users[1].Id, CategoryId = categories[2].Id,
-                ImagePath = "band_saw_machine.jpg"
+                Name = "Band saw machine",
+                Description = "Industrial band saw station",
+                Price = 100f,
+                Quantity = 1,
+                UsersId = users[1].Id,
+                CategoryId = categories[2].Id,
+                ImagePath = "band_saw_machine.jpg",
+                Location = "Gdansk"
             }
         };
         context.Tools.AddRange(tools);
@@ -89,10 +116,22 @@ public static class DbSeeder
         // ACCESSORIES
         var accessories = new List<ToolAccessory>
         {
-            new() { Id = Guid.NewGuid(), Name = "Drill Bits", Description = "Assorted drill bits",
-                QuantityAvailable = 50, ToolId = tools[0].Id },
-            new() { Id = Guid.NewGuid(), Name = "Nails",      Description = "Box of 100 nails",
-                QuantityAvailable = 100, ToolId = tools[1].Id }
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Drill Bits",
+                Description = "Assorted drill bits",
+                QuantityAvailable = 50,
+                ToolId = tools[0].Id
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Nails",
+                Description = "Box of 100 nails",
+                QuantityAvailable = 100,
+                ToolId = tools[1].Id
+            }
         };
         context.ToolAccessories.AddRange(accessories);
         context.SaveChanges();
@@ -106,23 +145,28 @@ public static class DbSeeder
             AddedAt = DateTime.UtcNow
         });
         context.SaveChanges();
-        // Review
-        context.Reviews.Add(new Review{
+
+        // REVIEWS
+        context.Reviews.Add(new Review
+        {
             Id = Guid.NewGuid(),
             Rating = 5,
             Description = "Great product",
             Date = DateTime.UtcNow,
             ToolId = tools[0].Id,
             UserId = users[1].Id
-            });
-        context.Reviews.Add(new Review{
+        });
+
+        context.Reviews.Add(new Review
+        {
             Id = Guid.NewGuid(),
             Rating = 3,
-            Description = "Great product",
+            Description = "Okay",
             Date = DateTime.UtcNow,
             ToolId = tools[0].Id,
             UserId = users[1].Id
-            });
+        });
+
         context.SaveChanges();
     }
 }

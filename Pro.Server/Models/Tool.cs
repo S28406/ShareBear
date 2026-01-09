@@ -12,6 +12,8 @@ public class Tool
     [Required]
     public string Description { get; set; }
     [Required]
+    public string Location { get; set; }
+    [Required]
     public float Price { get; set; }
     [Required]
     public int Quantity { get; set; }

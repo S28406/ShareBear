@@ -68,6 +68,10 @@ public partial class EditToolPage : Page
 
             if (!int.TryParse(QuantityTextBox.Text, out var qty))
                 throw new Exception("Quantity must be an integer.");
+            
+            var location = LocationTextBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(location))
+                throw new Exception("Location is required.");
 
             if (price < 0) throw new Exception("Price must be >= 0.");
             if (qty < 0) throw new Exception("Quantity must be >= 0.");
@@ -78,6 +82,7 @@ public partial class EditToolPage : Page
                 price,
                 qty,
                 categoryId,
+                location,
                 ImageFileNameTextBox.Text.Trim()
             );
 

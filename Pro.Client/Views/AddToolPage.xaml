@@ -22,6 +22,9 @@
 
             <TextBlock Text="Category"/>
             <ComboBox x:Name="CategoryComboBox" Height="30" Margin="0,4,0,12"/>
+            
+            <TextBlock Text="Location"/>
+            <TextBox x:Name="LocationTextBox" Height="30" Margin="0,4,0,12"/>
 
             <TextBlock Text="Image file name (e.g. band_saw_machine.jpg)"/>
             <TextBox x:Name="ImageFileNameTextBox" Height="30" Margin="0,4,0,16"/>

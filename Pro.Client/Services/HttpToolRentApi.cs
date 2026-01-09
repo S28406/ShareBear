@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Globalization;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Pro.Shared.Dtos;
@@ -56,21 +57,31 @@ public sealed class HttpToolRentApi : IToolRentApi
         => await _http.GetFromJsonAsync<ToolFiltersDto>("api/tools/filters")
            ?? new ToolFiltersDto();
 
-    public async Task<IReadOnlyList<ToolListItemDto>> GetToolsAsync(string category, string owner)
+    
+    public async Task<IReadOnlyList<ToolListItemDto>> GetToolsAsync(
+        string category,
+        string owner,
+        float? minPrice = null,
+        float? maxPrice = null,
+        string? location = null
+    )
     {
         if (string.Equals(category, "All", StringComparison.OrdinalIgnoreCase)) category = "";
         if (string.Equals(owner, "All", StringComparison.OrdinalIgnoreCase)) owner = "";
-        
+
         var qs = new List<string>();
         if (!string.IsNullOrWhiteSpace(category)) qs.Add($"category={Uri.EscapeDataString(category)}");
         if (!string.IsNullOrWhiteSpace(owner)) qs.Add($"owner={Uri.EscapeDataString(owner)}");
+        if (minPrice is not null)
+            qs.Add($"minPrice={minPrice.Value.ToString(CultureInfo.InvariantCulture)}");
+        if (maxPrice is not null)
+            qs.Add($"maxPrice={maxPrice.Value.ToString(CultureInfo.InvariantCulture)}");
+        if (!string.IsNullOrWhiteSpace(location)) qs.Add($"location={Uri.EscapeDataString(location)}");
 
         var url = "api/tools" + (qs.Count > 0 ? "?" + string.Join("&", qs) : "");
-        return await _http.GetFromJsonAsync<List<ToolListItemDto>>(url) ?? new List<ToolListItemDto>();
+        return await _http.GetFromJsonAsync<List<ToolListItemDto>>(url) ?? new();
     }
 
-    // public async Task<ToolDetailsDto?> GetToolAsync(Guid toolId)
-    //     => await _http.GetFromJsonAsync<ToolDetailsDto>($"api/tools/{toolId}");
     
     public async Task<ToolDetailsDto?> GetToolAsync(Guid toolId)
     {

@@ -8,7 +8,8 @@ public record ToolListItemDto(
     float Price,
     string ImagePath,
     string CategoryName,
-    string OwnerUsername
+    string OwnerUsername,
+    string Location
 );
 
 public record ReviewDto(
@@ -28,6 +29,7 @@ public record ToolDetailsDto(
     string ImagePath,
     string CategoryName,
     string OwnerUsername,
+    string Location,
     IReadOnlyList<ReviewDto> Reviews
 );
 
@@ -37,6 +39,7 @@ public record CreateToolRequestDto(
     float Price,
     int Quantity,
     Guid CategoryId,
+    string Location,
     string? ImageFileName
 );
 
@@ -46,5 +49,6 @@ public record UpdateToolRequestDto(
     float Price,
     int Quantity,
     Guid CategoryId,
+    string Location,
     string? ImageFileName
 );

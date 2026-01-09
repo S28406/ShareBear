@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PRO.Data.Context;
@@ -11,9 +12,11 @@ using PRO.Data.Context;
 namespace PRO_.Migrations
 {
     [DbContext(typeof(ToolLendingContext))]
-    partial class ToolLendingContextModelSnapshot : ModelSnapshot
+    [Migration("20260109153422_Added_More_Categories")]
+    partial class Added_More_Categories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

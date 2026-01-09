@@ -15,6 +15,20 @@
 
             <TextBlock Text="Owner" FontSize="16" FontWeight="Bold" Margin="0,20,0,8"/>
             <ComboBox x:Name="UserFilterComboBox" SelectionChanged="Filter_Changed"/>
+            
+            <TextBlock Text="Location" FontSize="16" FontWeight="Bold" Margin="0,20,0,8"/>
+            <ComboBox x:Name="LocationFilterComboBox" SelectionChanged="Filter_Changed"/>
+
+            <TextBlock Text="Min Price" FontSize="16" FontWeight="Bold" Margin="0,20,0,8"/>
+            <TextBox x:Name="MinPriceTextBox"
+                     Margin="0,0,0,10"
+                     TextChanged="Filter_Changed"
+                     ToolTip="Leave empty for no minimum"/>
+            
+            <TextBlock Text="Max Price" FontSize="16" FontWeight="Bold" Margin="0,10,0,8"/>
+            <TextBox x:Name="MaxPriceTextBox"
+                     TextChanged="Filter_Changed"
+                     ToolTip="Leave empty for no maximum"/>
         </StackPanel>
 
         <!-- Content -->

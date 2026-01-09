@@ -49,6 +49,10 @@ public partial class AddToolPage : Page
 
             if (!int.TryParse(QuantityTextBox.Text, out var qty))
                 throw new Exception("Quantity must be an integer.");
+            
+            var location = LocationTextBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(location))
+                throw new Exception("Location is required.");
 
             var req = new CreateToolRequestDto(
                 NameTextBox.Text.Trim(),
@@ -56,6 +60,7 @@ public partial class AddToolPage : Page
                 price,
                 qty,
                 categoryId,
+                location,
                 ImageFileNameTextBox.Text.Trim()
             );
 

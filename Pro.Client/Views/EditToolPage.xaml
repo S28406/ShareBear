@@ -34,6 +34,9 @@
                     <TextBlock Text="Category" FontWeight="Bold"/>
                     <ComboBox x:Name="CategoryComboBox" Margin="0,4,0,12" Height="32"
                               DisplayMemberPath="Name" SelectedValuePath="Id"/>
+                    
+                    <TextBlock Text="Location"/>
+                    <TextBox x:Name="LocationTextBox" Height="30" Margin="0,4,0,12"/>
 
                     <TextBlock Text="Image filename (e.g. drill.jpg)" FontWeight="Bold"/>
                     <TextBox x:Name="ImageFileNameTextBox" Margin="0,4,0,16" Height="32"/>
