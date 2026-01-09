@@ -34,7 +34,12 @@ namespace Pro.Client.Views
         private async System.Threading.Tasks.Task LoadDataAsync()
         {
             _tool = await Api.Instance.GetToolAsync(_toolId);
-            if (_tool == null) return;
+            if (_tool is null)
+            {
+                MessageBox.Show("Tool not found (maybe it was not saved or the API returned a wrong id).");
+                NavigationService?.GoBack();
+                return;
+            }
 
             ToolName.Text = _tool.Name;
             CategoryName.Text = $"Category: {_tool.CategoryName}";

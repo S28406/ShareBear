@@ -28,8 +28,23 @@ namespace Pro.Client.Views
                 var auth = await Api.Instance.LoginAsync(new LoginRequestDto(input, pass));
                 AppState.Token = auth.Token;
                 AppState.CurrentUser = auth.User;
+                
+                if (AppState.CurrentUser is not null && string.IsNullOrWhiteSpace(AppState.CurrentUser.Role))
+                {
+                    var roleFromJwt = Pro.Client.Helpers.JwtHelper.TryGetRole(AppState.Token);
 
-                // Refresh header buttons if you want
+                    if (!string.IsNullOrWhiteSpace(roleFromJwt))
+                    {
+                        AppState.CurrentUser = AppState.CurrentUser with { Role = roleFromJwt.Trim() };
+                    }
+                }
+                
+                MessageBox.Show(
+                    $"Token set: {(!string.IsNullOrWhiteSpace(AppState.Token))}\n" +
+                    $"User null: {AppState.CurrentUser is null}\n" +
+                    $"Role: '{AppState.CurrentUser?.Role ?? "NULL"}'",
+                    "DEBUG LOGIN STATE");
+
                 if (Application.Current.MainWindow is Pro.Client.Views.MainWindow mw)
                     mw.RefreshHeader();
 

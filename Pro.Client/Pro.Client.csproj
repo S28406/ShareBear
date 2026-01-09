@@ -43,4 +43,8 @@
       <Resource Include="Images\placeholder.jpg" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
+    </ItemGroup>
+
 </Project>

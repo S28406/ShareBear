@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Pro.Shared.Dtos;
 using ToolRent.Services;
@@ -16,6 +17,14 @@ public sealed class HttpToolRentApi : IToolRentApi
     }
 
     public void SetToken(string? token) => _token = token;
+    private void ApplyAuth()
+    {
+        _http.DefaultRequestHeaders.Authorization = null;
+
+        var token = _token ?? AppState.Token;
+        if (!string.IsNullOrWhiteSpace(token))
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
 
     // Auth
     public async Task<AuthResponseDto> LoginAsync(LoginRequestDto req)
@@ -36,6 +45,12 @@ public sealed class HttpToolRentApi : IToolRentApi
         resp.EnsureSuccessStatusCode();
     }
 
+    // Categories
+    public async Task<IReadOnlyList<CategoryDto>> GetCategoriesAsync()
+    {
+        ApplyAuth();
+        return await _http.GetFromJsonAsync<List<CategoryDto>>("api/categories") ?? new();
+    }
     // Tools
     public async Task<ToolFiltersDto> GetToolFiltersAsync()
         => await _http.GetFromJsonAsync<ToolFiltersDto>("api/tools/filters")
@@ -54,8 +69,40 @@ public sealed class HttpToolRentApi : IToolRentApi
         return await _http.GetFromJsonAsync<List<ToolListItemDto>>(url) ?? new List<ToolListItemDto>();
     }
 
+    // public async Task<ToolDetailsDto?> GetToolAsync(Guid toolId)
+    //     => await _http.GetFromJsonAsync<ToolDetailsDto>($"api/tools/{toolId}");
+    
     public async Task<ToolDetailsDto?> GetToolAsync(Guid toolId)
-        => await _http.GetFromJsonAsync<ToolDetailsDto>($"api/tools/{toolId}");
+    {
+        var resp = await _http.GetAsync($"api/tools/{toolId}");
+
+        if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
+            return null;
+
+        resp.EnsureSuccessStatusCode();
+
+        return await resp.Content.ReadFromJsonAsync<ToolDetailsDto>();
+    }
+    
+    public async Task<ToolDetailsDto> CreateToolAsync(CreateToolRequestDto req)
+    {
+        ApplyAuth();
+        var res = await _http.PostAsJsonAsync("api/tools", req);
+        res.EnsureSuccessStatusCode();
+
+        // If body exists, use it
+        var body = await res.Content.ReadFromJsonAsync<ToolDetailsDto>();
+        if (body is not null && body.Id != Guid.Empty) return body;
+
+        // If body is empty, follow Location header
+        var location = res.Headers.Location?.ToString();
+        if (string.IsNullOrWhiteSpace(location))
+            throw new InvalidOperationException("Create succeeded but server returned no body and no Location header.");
+
+        // location might be absolute or relative
+        var tool = await _http.GetFromJsonAsync<ToolDetailsDto>(location);
+        return tool ?? throw new InvalidOperationException("Failed to load created tool from Location.");
+    }
 
     // Borrow + Payment + History
     public async Task<CreateBorrowResponseDto> CreateBorrowAsync(CreateBorrowRequestDto req)

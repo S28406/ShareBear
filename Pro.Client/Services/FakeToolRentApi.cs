@@ -7,6 +7,12 @@ public class FakeToolRentApi : IToolRentApi
     private readonly List<ToolListItemDto> _tools;
     private readonly Dictionary<Guid, ToolDetailsDto> _details;
     private readonly List<PaymentHistoryItemDto> _payments = new();
+    private readonly List<CategoryDto> _categories = new()
+    {
+        new CategoryDto(Guid.Parse("11111111-1111-1111-1111-111111111111"), "Power Tools"),
+        new CategoryDto(Guid.Parse("22222222-2222-2222-2222-222222222222"), "Hand Tools"),
+        new CategoryDto(Guid.Parse("33333333-3333-3333-3333-333333333333"), "Stations"),
+    };
 
     public FakeToolRentApi()
     {
@@ -42,6 +48,9 @@ public class FakeToolRentApi : IToolRentApi
             Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")));
     }
 
+    
+    public Task<IReadOnlyList<CategoryDto>> GetCategoriesAsync()
+        => Task.FromResult((IReadOnlyList<CategoryDto>)_categories);
     public Task<AuthResponseDto> LoginAsync(LoginRequestDto req)
     {
         // super fake: accept anything non-empty
@@ -72,6 +81,44 @@ public class FakeToolRentApi : IToolRentApi
             q = q.Where(t => t.OwnerUsername == owner);
 
         return Task.FromResult((IReadOnlyList<ToolListItemDto>)q.ToList());
+    }
+    
+    public Task<ToolDetailsDto> CreateToolAsync(CreateToolRequestDto req)
+    {
+        var id = Guid.NewGuid();
+
+        var catName = _categories.FirstOrDefault(c => c.Id == req.CategoryId)?.Name
+                      ?? "Unknown";
+
+        var owner = "admin"; // fake
+
+        var img = string.IsNullOrWhiteSpace(req.ImageFileName)
+            ? "/images/placeholder.jpg"
+            : (req.ImageFileName.StartsWith("/") ? req.ImageFileName : "/images/" + req.ImageFileName);
+
+        // Update fake lists so it appears in UI if you ever use Fake API
+        _tools.Add(new ToolListItemDto(
+            id,
+            req.Name,
+            req.Price,
+            img,
+            catName,
+            owner
+        ));
+
+        var dto = new ToolDetailsDto(
+            id,
+            req.Name,
+            req.Description,
+            req.Price,
+            req.Quantity,
+            img,
+            catName,
+            owner,
+            new List<ReviewDto>()
+        );
+
+        return Task.FromResult(dto);
     }
 
     public Task<ToolDetailsDto?> GetToolAsync(Guid toolId)
