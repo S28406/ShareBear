@@ -82,7 +82,12 @@ public class FakeToolRentApi : IToolRentApi
 
         return Task.FromResult((IReadOnlyList<ToolListItemDto>)q.ToList());
     }
-    
+
+    public Task<IReadOnlyList<ToolListItemDto>> GetMyToolsAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<ToolDetailsDto> CreateToolAsync(CreateToolRequestDto req)
     {
         var id = Guid.NewGuid();
@@ -118,6 +123,16 @@ public class FakeToolRentApi : IToolRentApi
         );
 
         return Task.FromResult(dto);
+    }
+
+    public Task UpdateToolAsync(Guid toolId, UpdateToolRequestDto req)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteToolAsync(Guid toolId)
+    {
+        throw new NotImplementedException();
     }
 
     public Task<ToolDetailsDto?> GetToolAsync(Guid toolId)

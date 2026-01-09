@@ -1,0 +1,50 @@
+﻿<Page x:Class="Pro.Client.Views.EditToolPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="EditToolPage" Background="#F8FAFC">
+
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Margin="0,0,0,16">
+            <Button Content="← Back" Click="BackButton_Click"
+                    Width="90" Height="30" Margin="0,0,10,0"
+                    Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/>
+            <TextBlock Text="Edit Tool" FontSize="20" FontWeight="Bold" VerticalAlignment="Center"/>
+        </DockPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid MaxWidth="520">
+                <StackPanel>
+                    <TextBlock Text="Name" FontWeight="Bold"/>
+                    <TextBox x:Name="NameTextBox" Margin="0,4,0,12" Height="32"/>
+
+                    <TextBlock Text="Description" FontWeight="Bold"/>
+                    <TextBox x:Name="DescriptionTextBox" Margin="0,4,0,12" Height="80" TextWrapping="Wrap" AcceptsReturn="True"/>
+
+                    <TextBlock Text="Price (per day)" FontWeight="Bold"/>
+                    <TextBox x:Name="PriceTextBox" Margin="0,4,0,12" Height="32"/>
+
+                    <TextBlock Text="Quantity" FontWeight="Bold"/>
+                    <TextBox x:Name="QuantityTextBox" Margin="0,4,0,12" Height="32"/>
+
+                    <TextBlock Text="Category" FontWeight="Bold"/>
+                    <ComboBox x:Name="CategoryComboBox" Margin="0,4,0,12" Height="32"
+                              DisplayMemberPath="Name" SelectedValuePath="Id"/>
+
+                    <TextBlock Text="Image filename (e.g. drill.jpg)" FontWeight="Bold"/>
+                    <TextBox x:Name="ImageFileNameTextBox" Margin="0,4,0,16" Height="32"/>
+
+                    <TextBlock x:Name="ErrorText" Foreground="Tomato" Margin="0,0,0,12" Visibility="Collapsed"/>
+
+                    <Button Content="Save changes"
+                            Click="SaveButton_Click"
+                            Height="40" Background="#0B80F4" Foreground="White" FontWeight="Bold"/>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

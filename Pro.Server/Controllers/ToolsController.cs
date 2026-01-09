@@ -20,7 +20,7 @@ public class ToolsController : ControllerBase
         if (string.IsNullOrWhiteSpace(fileName))
             return "/images/placeholder.jpg";
 
-        fileName = Path.GetFileName(fileName); // safety (no folders)
+        fileName = Path.GetFileName(fileName);
         return $"/images/{fileName}";
     }
     
@@ -29,11 +29,37 @@ public class ToolsController : ControllerBase
 
     private bool IsAdmin()
         => User.IsInRole("Admin");
+    
+    private static ToolDetailsDto ToDetailsDto(PRO.Models.Tool tool)
+    {
+        var reviews = tool.Reviews
+            .OrderByDescending(r => r.Date)
+            .Select(r => new ReviewDto(
+                r.Id,
+                r.Rating,
+                r.Description,
+                r.Date,
+                new UserDtos(r.User.Id, r.User.Username, r.User.Email, r.User.Role)
+            ))
+            .ToList();
+
+        return new ToolDetailsDto(
+            tool.Id,
+            tool.Name,
+            tool.Description,
+            tool.Price,
+            tool.Quantity,
+            Img(tool.ImagePath),
+            tool.Category.Name,
+            tool.User.Username,
+            reviews
+        );
+    }
 
     private static string NormalizeImage(string? fileName)
     {
         if (string.IsNullOrWhiteSpace(fileName))
-            return "placeholder.jpg"; // stored in DB; API will map to /images/placeholder.jpg
+            return "placeholder.jpg";
 
         return Path.GetFileName(fileName);
     }
@@ -153,9 +179,15 @@ public class ToolsController : ControllerBase
 
         _db.Tools.Add(tool);
         await _db.SaveChangesAsync();
+        
+        var created = await _db.Tools
+            .Include(t => t.Category)
+            .Include(t => t.User)
+            .Include(t => t.Reviews).ThenInclude(r => r.User)
+            .FirstAsync(t => t.Id == tool.Id);
 
-        // Return details using your existing GetTool logic pattern:
-        return CreatedAtAction(nameof(GetTool), new { toolId = tool.Id }, await GetTool(tool.Id));
+        // return CreatedAtAction(nameof(GetTool), new { toolId = tool.Id }, await GetTool(tool.Id));
+        return CreatedAtAction(nameof(GetTool), new { toolId = tool.Id }, ToDetailsDto(created));
     }
     
     [Authorize(Roles = "Seller,Admin")]
@@ -167,7 +199,6 @@ public class ToolsController : ControllerBase
 
         var userId = CurrentUserId();
 
-        // Ownership check: sellers can only edit their own tools; admin can edit all
         if (!IsAdmin() && tool.UsersId != userId)
             return Forbid();
 

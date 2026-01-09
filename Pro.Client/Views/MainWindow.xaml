@@ -16,6 +16,11 @@
                             Width="110" Height="30" Margin="5,0"
                             Background="#0B80F4" Foreground="White" FontWeight="Bold"
                             Visibility="Collapsed"/>
+                    <Button x:Name="MyToolsBtn" Content="My Tools" Click="GoMyTools_Click"
+                            Width="90" Height="30" Margin="5,0"
+                            Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"
+                            Visibility="Collapsed"/>
+
                     <Button Content="Register" Click="GoRegister_Click" Width="84" Height="30" Margin="5,0" Background="#0C7FF2" Foreground="White" FontWeight="Bold"/>
                     <Button Content="History" Click="GoHistory_Click" Width="100" Height="30" Margin="5,0"
                             Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/>

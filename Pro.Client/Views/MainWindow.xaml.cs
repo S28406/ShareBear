@@ -10,7 +10,7 @@ namespace Pro.Client.Views
         {
             InitializeComponent();
 
-            RefreshHeader(); // show/hide buttons based on role + login
+            RefreshHeader();
             ContentFrame.Navigate(new ToolListPage());
         }
 
@@ -21,10 +21,26 @@ namespace Pro.Client.Views
 
         private void UpdateAddProductVisibility()
         {
-            AddProductBtn.Visibility =
-                RoleHelper.IsSellerOrAdmin(AppState.CurrentUser)
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+            var canManage = RoleHelper.IsSellerOrAdmin(AppState.CurrentUser);
+
+            AddProductBtn.Visibility = canManage ? Visibility.Visible : Visibility.Collapsed;
+            MyToolsBtn.Visibility = canManage ? Visibility.Visible : Visibility.Collapsed;
+            // AddProductBtn.Visibility =
+            //     RoleHelper.IsSellerOrAdmin(AppState.CurrentUser)
+            //         ? Visibility.Visible
+            //         : Visibility.Collapsed;
+        }
+        
+        private void GoMyTools_Click(object sender, RoutedEventArgs e)
+        {
+            if (!RoleHelper.IsSellerOrAdmin(AppState.CurrentUser))
+            {
+                MessageBox.Show("Only sellers/admins can manage tools.", "Access denied",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            ContentFrame.Navigate(new MyToolsPage());
         }
 
         private void GoRegister_Click(object sender, RoutedEventArgs e)

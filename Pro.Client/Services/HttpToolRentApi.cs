@@ -83,7 +83,11 @@ public sealed class HttpToolRentApi : IToolRentApi
 
         return await resp.Content.ReadFromJsonAsync<ToolDetailsDto>();
     }
-    
+    public async Task<IReadOnlyList<ToolListItemDto>> GetMyToolsAsync()
+    {
+        ApplyAuth();
+        return await _http.GetFromJsonAsync<List<ToolListItemDto>>("api/tools/mine") ?? new();
+    }
     public async Task<ToolDetailsDto> CreateToolAsync(CreateToolRequestDto req)
     {
         ApplyAuth();
@@ -99,6 +103,20 @@ public sealed class HttpToolRentApi : IToolRentApi
 
         var tool = await _http.GetFromJsonAsync<ToolDetailsDto>(location);
         return tool ?? throw new InvalidOperationException("Failed to load created tool from Location.");
+    }
+
+    public async Task UpdateToolAsync(Guid toolId, UpdateToolRequestDto req)
+    {
+        ApplyAuth();
+        var resp = await _http.PutAsJsonAsync($"api/tools/{toolId}", req);
+        resp.EnsureSuccessStatusCode();
+    }
+
+    public async Task DeleteToolAsync(Guid toolId)
+    {
+        ApplyAuth();
+        var resp = await _http.DeleteAsync($"api/tools/{toolId}");
+        resp.EnsureSuccessStatusCode();
     }
 
     // Borrow + Payment + History
