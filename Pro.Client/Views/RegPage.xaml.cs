@@ -18,6 +18,9 @@ namespace Pro.Client.Views
             var email = EmailBox.Text.Trim();
             var pass = PasswordBox.Password;
             var confirm = ConfirmBox.Password;
+            var role = SellerCheckBox.IsChecked == true ? "Seller" : "Customer";
+            
+
 
             if (string.IsNullOrWhiteSpace(username) ||
                 string.IsNullOrWhiteSpace(email) ||
@@ -47,7 +50,7 @@ namespace Pro.Client.Views
 
             try
             {
-                await Api.Instance.RegisterAsync(new RegisterRequestDto(username, email, pass));
+                await Api.Instance.RegisterAsync(new RegisterRequestDto(username, email, pass, role));
                 MessageBox.Show("Account created. Please sign in.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 NavigationService?.Navigate(new LoginPage());
             }

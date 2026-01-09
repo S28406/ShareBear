@@ -96,7 +96,6 @@ public class FakeToolRentApi : IToolRentApi
             ? "/images/placeholder.jpg"
             : (req.ImageFileName.StartsWith("/") ? req.ImageFileName : "/images/" + req.ImageFileName);
 
-        // Update fake lists so it appears in UI if you ever use Fake API
         _tools.Add(new ToolListItemDto(
             id,
             req.Name,

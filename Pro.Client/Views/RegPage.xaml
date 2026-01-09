@@ -3,15 +3,13 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Title="Register" Background="#F8FAFC">
     <Grid Background="#F8FAFC">
-        <!-- Keep page usable on small windows -->
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid Margin="32">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>   <!-- Back button -->
-                    <RowDefinition Height="*"/>      <!-- Form card -->
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Back button row -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
                     <Button x:Name="BackButton"
                             Click="BackButton_Click"
@@ -26,8 +24,7 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
-
-                <!-- Card -->
+                
                 <Border Grid.Row="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
@@ -51,6 +48,7 @@
 
                         <TextBlock Text="Confirm password"/>
                         <PasswordBox x:Name="ConfirmBox" Margin="0,4,0,16" Height="32"/>
+                        <CheckBox x:Name="SellerCheckBox" Content="Register as Seller" Margin="0,8,0,20"/>
 
                         <TextBlock x:Name="ErrorText"
                                    Foreground="Tomato"

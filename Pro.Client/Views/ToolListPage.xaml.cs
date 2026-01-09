@@ -76,7 +76,7 @@ namespace Pro.Client.Views
                 {
                     Height = 120,
                     Stretch = Stretch.UniformToFill,
-                    Source = ResolveImage(tool.ImagePath)
+                    Source = Pro.Client.Helpers.ImageHelper.Resolve(tool.ImagePath)
                 });
 
                 stack.Children.Add(new TextBlock
@@ -100,74 +100,6 @@ namespace Pro.Client.Views
 
                 ToolListPanel.Items.Add(card);
             }
-        }
-
-        // private static ImageSource ResolveImage(string? dbPath)
-        // {
-        //     try
-        //     {
-        //         var baseDir = AppContext.BaseDirectory;
-        //         var raw = (dbPath ?? "").Replace('/', '\\').Trim();
-        //
-        //         string fullPath;
-        //         if (Path.IsPathRooted(raw)) fullPath = raw;
-        //         else
-        //         {
-        //             var p1 = Path.Combine(baseDir, raw);
-        //             var p2 = Path.Combine(baseDir, "Images", Path.GetFileName(raw ?? ""));
-        //             fullPath = File.Exists(p1) ? p1 : p2;
-        //         }
-        //
-        //         if (File.Exists(fullPath))
-        //         {
-        //             var bmp = new BitmapImage();
-        //             bmp.BeginInit();
-        //             bmp.CacheOption = BitmapCacheOption.OnLoad;
-        //             bmp.UriSource = new Uri(fullPath, UriKind.Absolute);
-        //             bmp.EndInit();
-        //             return bmp;
-        //         }
-        //     }
-        //     catch { }
-        //
-        //     return new BitmapImage(new Uri("pack://application:,,,/Images/placeholder.jpg"));
-        // }
-
-        // private static BitmapImage MakeBitmap(Uri uri)
-        // {
-        //     var bmp = new BitmapImage();
-        //     bmp.BeginInit();
-        //     bmp.UriSource = uri;
-        //     bmp.CacheOption = BitmapCacheOption.OnLoad;
-        //     bmp.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-        //     bmp.EndInit();
-        //     bmp.Freeze(); // safe for WPF
-        //     return bmp;
-        // }
-        
-        private static ImageSource ResolveImage(string? imagePath)
-        {
-            var baseUrl = Pro.Client.Services.Api.BaseUrl; // we’ll add this const
-            var path = string.IsNullOrWhiteSpace(imagePath) ? "/images/placeholder.jpg" : imagePath;
-
-            // if server ever returns "Drill.jpg", normalize it
-            if (!path.StartsWith("/")) path = "/images/" + path;
-
-            var full = new Uri(new Uri(baseUrl + "/"), path.TrimStart('/'));
-            return MakeBitmap(full);
-        }
-        
-        private static BitmapImage MakeBitmap(Uri uri)
-        {
-            var bmp = new BitmapImage();
-            bmp.BeginInit();
-            bmp.CacheOption = BitmapCacheOption.OnLoad; // fully load into memory
-            bmp.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            bmp.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
-            bmp.UriSource = uri;
-            bmp.EndInit();
-            // bmp.Freeze(); // now safe
-            return bmp;
         }
 
         private async void Filter_Changed(object sender, RoutedEventArgs e)

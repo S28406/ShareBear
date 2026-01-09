@@ -80,6 +80,16 @@ public class AuthController : ControllerBase
 
         var (hash, salt) = PasswordHelper.Hash(req.Password);
 
+        var role = (req.Role ?? "Customer").Trim();
+
+        if (!role.Equals("Customer", StringComparison.OrdinalIgnoreCase) &&
+            !role.Equals("Seller", StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest("Invalid role. Allowed: Customer, Seller.");
+        }
+
+        role = role.Equals("Seller", StringComparison.OrdinalIgnoreCase) ? "Seller" : "Customer";
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -87,7 +97,7 @@ public class AuthController : ControllerBase
             Email = req.Email,
             PasswordHash = hash,
             PasswordSalt = salt,
-            Role = "Customer"
+            Role = role
         };
 
         _db.Users.Add(user);

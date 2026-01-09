@@ -35,7 +35,7 @@ public sealed class HttpToolRentApi : IToolRentApi
         var dto = await resp.Content.ReadFromJsonAsync<AuthResponseDto>()
                   ?? throw new Exception("Empty login response");
 
-        _token = dto.Token; // store token for later
+        _token = dto.Token;
         return dto;
     }
 
@@ -90,16 +90,13 @@ public sealed class HttpToolRentApi : IToolRentApi
         var res = await _http.PostAsJsonAsync("api/tools", req);
         res.EnsureSuccessStatusCode();
 
-        // If body exists, use it
         var body = await res.Content.ReadFromJsonAsync<ToolDetailsDto>();
         if (body is not null && body.Id != Guid.Empty) return body;
 
-        // If body is empty, follow Location header
         var location = res.Headers.Location?.ToString();
         if (string.IsNullOrWhiteSpace(location))
             throw new InvalidOperationException("Create succeeded but server returned no body and no Location header.");
 
-        // location might be absolute or relative
         var tool = await _http.GetFromJsonAsync<ToolDetailsDto>(location);
         return tool ?? throw new InvalidOperationException("Failed to load created tool from Location.");
     }

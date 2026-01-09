@@ -10,7 +10,6 @@ public static class JwtHelper
 
         var token = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
 
-        // ASP.NET can emit either "role" or the long ClaimTypes.Role URI
         var role =
             token.Claims.FirstOrDefault(c => c.Type == "role")?.Value
             ?? token.Claims.FirstOrDefault(c => c.Type.EndsWith("/role"))?.Value;
