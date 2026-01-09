@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using Pro.Client.Helpers;
 using History = Pro.Client.Views.History;
 
@@ -19,6 +20,21 @@ namespace Pro.Client.Views
             UpdateAddProductVisibility();
         }
 
+        private void Search_Click(object sender, RoutedEventArgs e)
+            => RunSearch();
+
+        private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                RunSearch();
+        }
+
+        private void RunSearch()
+        {
+            var q = SearchTextBox.Text?.Trim();
+            ContentFrame.Navigate(new ToolListPage(q));
+        }
+        
         private void UpdateAddProductVisibility()
         {
             var canManage = RoleHelper.IsSellerOrAdmin(AppState.CurrentUser);

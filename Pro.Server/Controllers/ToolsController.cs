@@ -64,24 +64,6 @@ public class ToolsController : ControllerBase
 
         return Path.GetFileName(fileName);
     }
-
-    // [HttpGet("filters")]
-    // public async Task<ActionResult<ToolFiltersDto>> GetFilters()
-    // {
-    //     var categories = await _db.Categories
-    //         .Select(c => c.Name)
-    //         .Distinct()
-    //         .OrderBy(x => x)
-    //         .ToListAsync();
-    //
-    //     var owners = await _db.Users
-    //         .Select(u => u.Username)
-    //         .Distinct()
-    //         .OrderBy(x => x)
-    //         .ToListAsync();
-    //
-    //     return Ok(new ToolFiltersDto(categories, owners));
-    // }
     
     [HttpGet("filters")]
     public async Task<ActionResult<ToolFiltersDto>> GetFilters()
@@ -117,34 +99,43 @@ public class ToolsController : ControllerBase
         [FromQuery] string? owner,
         [FromQuery] float? minPrice,
         [FromQuery] float? maxPrice,
-        [FromQuery] string? location
+        [FromQuery] string? location,
+        [FromQuery] string? search
     )
     {
-        var q = _db.Tools
+        var query = _db.Tools
             .Include(t => t.Category)
             .Include(t => t.User)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(category))
-            q = q.Where(t => t.Category.Name == category);
+            query = query.Where(t => t.Category.Name == category);
 
         if (!string.IsNullOrWhiteSpace(owner))
-            q = q.Where(t => t.User.Username == owner);
+            query = query.Where(t => t.User.Username == owner);
 
         if (!string.IsNullOrWhiteSpace(location))
         {
             location = location.Trim();
-
-            q = q.Where(t => EF.Functions.ILike(t.Location, location));
+            query = query.Where(t => EF.Functions.ILike(t.Location, location));
         }
 
         if (minPrice is not null)
-            q = q.Where(t => t.Price >= minPrice.Value);
+            query = query.Where(t => t.Price >= minPrice.Value);
 
         if (maxPrice is not null)
-            q = q.Where(t => t.Price <= maxPrice.Value);
+            query = query.Where(t => t.Price <= maxPrice.Value);
 
-        var list = await q
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            search = search.Trim();
+            query = query.Where(t =>
+                EF.Functions.ILike(t.Name, $"%{search}%") ||
+                EF.Functions.ILike(t.Description, $"%{search}%")
+            );
+        }
+
+        var list = await query
             .OrderBy(t => t.Name)
             .Select(t => new ToolListItemDto(
                 t.Id,
@@ -159,36 +150,6 @@ public class ToolsController : ControllerBase
 
         return Ok(list);
     }
-    
-    // [HttpGet]
-    // public async Task<ActionResult<IReadOnlyList<ToolListItemDto>>> GetTools([FromQuery] string? category, [FromQuery] string? owner)
-    // {
-    //     var q = _db.Tools
-    //         .Include(t => t.Category)
-    //         .Include(t => t.User)
-    //         .AsQueryable();
-    //
-    //     if (!string.IsNullOrWhiteSpace(category))
-    //         q = q.Where(t => t.Category.Name == category);
-    //
-    //     if (!string.IsNullOrWhiteSpace(owner))
-    //         q = q.Where(t => t.User.Username == owner);
-    //
-    //     var list = await q
-    //         .OrderBy(t => t.Name)
-    //         .Select(t => new ToolListItemDto(
-    //             t.Id,
-    //             t.Name,
-    //             t.Price,
-    //             Img(t.ImagePath),
-    //             t.Category.Name,
-    //             t.User.Username,
-    //             t.Location
-    //         ))
-    //         .ToListAsync();
-    //
-    //     return Ok(list);
-    // }
 
     [HttpGet("{toolId:guid}")]
     public async Task<ActionResult<ToolDetailsDto>> GetTool(Guid toolId)
@@ -267,7 +228,6 @@ public class ToolsController : ControllerBase
             .Include(t => t.Reviews).ThenInclude(r => r.User)
             .FirstAsync(t => t.Id == tool.Id);
 
-        // return CreatedAtAction(nameof(GetTool), new { toolId = tool.Id }, await GetTool(tool.Id));
         return CreatedAtAction(nameof(GetTool), new { toolId = tool.Id }, ToDetailsDto(created));
     }
     

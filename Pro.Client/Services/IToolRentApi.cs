@@ -18,7 +18,8 @@ public interface IToolRentApi
         string owner,
         float? minPrice = null,
         float? maxPrice = null,
-        string? location = null
+        string? location = null,
+        string? q = null
     );
     Task<IReadOnlyList<ToolListItemDto>> GetMyToolsAsync();
     Task<ToolDetailsDto?> GetToolAsync(Guid toolId);

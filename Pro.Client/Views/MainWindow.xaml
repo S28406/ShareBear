@@ -10,7 +10,18 @@
                     <TextBlock Text="🛠️" FontSize="20" VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <TextBlock Text="ToolRent" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
                 </StackPanel>
-                <TextBox Width="200" Height="30" VerticalAlignment="Center" Margin="0,0,20,0" HorizontalAlignment="Left"/>
+                <TextBox x:Name="SearchTextBox"
+                         Width="200" Height="30"
+                         VerticalAlignment="Center"
+                         Margin="0,0,10,0"
+                         HorizontalAlignment="Left"
+                         KeyDown="SearchTextBox_KeyDown"/>
+                <Button Content="Search"
+                        Width="70" Height="30"
+                        VerticalAlignment="Center"
+                        Margin="0,0,20,0"
+                        Click="Search_Click"
+                        Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right" VerticalAlignment="Center">
                     <Button x:Name="AddProductBtn" Content="Add Product" Click="GoAddProduct_Click"
                             Width="110" Height="30" Margin="5,0"

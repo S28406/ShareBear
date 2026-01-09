@@ -16,9 +16,27 @@ namespace Pro.Client.Views
 {
     public partial class ToolListPage : Page
     {
+        private string? _searchQuery;
         public ToolListPage()
         {
             InitializeComponent();
+            Loaded += async (_, __) =>
+            {
+                await LoadFiltersAsync();
+                await LoadToolsAsync();
+            };
+        }
+        public async Task SetSearchAsync(string? searchQuery)
+        {
+            _searchQuery = string.IsNullOrWhiteSpace(searchQuery) ? null : searchQuery.Trim();
+            if (IsLoaded)
+                await LoadToolsAsync();
+        }
+        public ToolListPage(string? searchQuery = null)
+        {
+            InitializeComponent();
+            _searchQuery = string.IsNullOrWhiteSpace(searchQuery) ? null : searchQuery.Trim();
+
             Loaded += async (_, __) =>
             {
                 await LoadFiltersAsync();
@@ -66,8 +84,9 @@ namespace Pro.Client.Views
         : (float?)null;
 
     string? location = (loc == "All") ? null : loc;
+    
+    var tools = await Api.Instance.GetToolsAsync(cat, owner, minPrice, maxPrice, location, _searchQuery);
 
-    var tools = await Api.Instance.GetToolsAsync(cat, owner, minPrice, maxPrice, location);
 
     ToolListPanel.Items.Clear();
 

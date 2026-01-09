@@ -133,6 +133,12 @@ public sealed class FakeToolRentApi : IToolRentApi
         return Task.FromResult(new ToolFiltersDto(cats, owners, locations, minPrice, maxPrice));
     }
 
+    public Task<IReadOnlyList<ToolListItemDto>> GetToolsAsync(string category, string owner, float? minPrice = null, float? maxPrice = null,
+        string? location = null, string? q = null)
+    {
+        throw new NotImplementedException();
+    }
+
     // Tools List
     public Task<IReadOnlyList<ToolListItemDto>> GetToolsAsync(
         string category,
