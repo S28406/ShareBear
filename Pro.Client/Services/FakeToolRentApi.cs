@@ -275,8 +275,10 @@ public sealed class FakeToolRentApi : IToolRentApi
     {
         var tool = _tools.First(t => t.Id == req.ToolId);
         var borrowId = Guid.NewGuid();
+        var Date1 = DateTime.Now;
+        var Date2 = DateTime.Now;
         var total = (decimal)tool.Price * req.Quantity;
-        return Task.FromResult(new CreateBorrowResponseDto(borrowId, total));
+        return Task.FromResult(new CreateBorrowResponseDto(borrowId, total, Date2, Date1));
     }
 
     public Task<IReadOnlyList<string>> GetBorrowItemNamesAsync(Guid borrowId)

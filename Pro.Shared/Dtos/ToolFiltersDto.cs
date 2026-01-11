@@ -11,12 +11,6 @@ public sealed class ToolFiltersDto
     
     public ToolFiltersDto() { }
 
-    // public ToolFiltersDto(List<string> categories, List<string> owners)
-    // {
-    //     Categories = categories ?? new();
-    //     Owners = owners ?? new();
-    // }
-    
     public ToolFiltersDto(List<string> categories, List<string> owners, List<string> locations, float? minPrice, float? maxPrice)
     {
         Categories = categories ?? new();

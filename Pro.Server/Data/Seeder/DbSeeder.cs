@@ -112,7 +112,22 @@ public static class DbSeeder
         };
         context.Tools.AddRange(tools);
         context.SaveChanges();
+        
+        
+        var from = DateTime.UtcNow.Date;
+        var to = from.AddMonths(6);
 
+        context.Schedules.AddRange(tools.Select(t => new Schedule
+        {
+            Id = Guid.NewGuid(),
+            ToolsId = t.Id,
+            AvailableFrom = from,
+            AvailableTo = to
+        }));
+
+        context.SaveChanges();
+        
+        
         // ACCESSORIES
         var accessories = new List<ToolAccessory>
         {

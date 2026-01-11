@@ -144,6 +144,7 @@ public sealed class HttpToolRentApi : IToolRentApi
     // Borrow + Payment + History
     public async Task<CreateBorrowResponseDto> CreateBorrowAsync(CreateBorrowRequestDto req)
     {
+        ApplyAuth();
         var resp = await _http.PostAsJsonAsync("api/borrows", req);
         resp.EnsureSuccessStatusCode();
 
@@ -156,12 +157,14 @@ public sealed class HttpToolRentApi : IToolRentApi
 
     public async Task ConfirmPaymentAsync(PaymentConfirmRequestDto req)
     {
+        ApplyAuth();
         var resp = await _http.PostAsJsonAsync("api/payments/confirm", req);
         resp.EnsureSuccessStatusCode();
     }
 
     public async Task<IReadOnlyList<PaymentHistoryItemDto>> GetPaymentHistoryAsync(DateTime? fromUtc, DateTime? toUtc)
     {
+        ApplyAuth();
         var qs = new List<string>();
         if (fromUtc is not null) qs.Add($"fromUtc={Uri.EscapeDataString(fromUtc.Value.ToString("O"))}");
         if (toUtc is not null) qs.Add($"toUtc={Uri.EscapeDataString(toUtc.Value.ToString("O"))}");

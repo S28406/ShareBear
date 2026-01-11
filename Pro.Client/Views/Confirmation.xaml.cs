@@ -14,14 +14,19 @@ namespace Pro.Client.Views
     {
         private readonly Guid _borrowId;
         private readonly decimal _total;
+        private readonly DateTime _start;
+        private readonly DateTime _end;
 
-        public PaymentConfirmationPage(Guid borrowId, decimal total)
+        public PaymentConfirmationPage(Guid borrowId, decimal total, DateTime start, DateTime end)
         {
             InitializeComponent();
             _borrowId = borrowId;
             _total = total;
+            _start = start;
+            _end = end;
 
-            Loaded += PaymentConfirmationPage_Loaded;
+            BookingDatesText.Text = $"Booking: {_start:yyyy-MM-dd} → {_end:yyyy-MM-dd}";
+            TotalText.Text = $"{_total:0.00}";
         }
 
         private async void PaymentConfirmationPage_Loaded(object sender, RoutedEventArgs e)

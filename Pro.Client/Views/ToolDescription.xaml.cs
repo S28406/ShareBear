@@ -53,7 +53,6 @@ namespace Pro.Client.Views
                 .OrderByDescending(r => r.Date)
                 .ToList();
         }
-
         private async void RentButtonClick(object sender, RoutedEventArgs e)
         {
             if (_tool == null) return;
@@ -65,10 +64,29 @@ namespace Pro.Client.Views
                 return;
             }
 
+            if (StartDatePicker.SelectedDate is null || EndDatePicker.SelectedDate is null)
+            {
+                MessageBox.Show("Pick start and end dates.");
+                return;
+            }
+
+            if (!int.TryParse(QuantityTextBox.Text, out var qty) || qty <= 0)
+            {
+                MessageBox.Show("Quantity must be a positive integer.");
+                return;
+            }
+
+            var start = StartDatePicker.SelectedDate.Value;
+            var end = EndDatePicker.SelectedDate.Value;
+
             try
             {
-                var res = await Api.Instance.CreateBorrowAsync(new CreateBorrowRequestDto(_tool.Id, 1));
-                NavigationService?.Navigate(new PaymentConfirmationPage(res.BorrowId, res.Total));
+                var res = await Api.Instance.CreateBorrowAsync(
+                    new CreateBorrowRequestDto(_tool.Id, qty, start, end)
+                );
+
+                NavigationService?.Navigate(new PaymentConfirmationPage(res.BorrowId, res.Total, start, end));
+
             }
             catch (Exception ex)
             {
@@ -76,5 +94,27 @@ namespace Pro.Client.Views
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        // private async void RentButtonClick(object sender, RoutedEventArgs e)
+        // {
+        //     if (_tool == null) return;
+        //
+        //     if (AppState.CurrentUser is null)
+        //     {
+        //         MessageBox.Show("Please sign in to rent this tool.", "Sign in required",
+        //             MessageBoxButton.OK, MessageBoxImage.Information);
+        //         return;
+        //     }
+        //
+        //     try
+        //     {
+        //         var res = await Api.Instance.CreateBorrowAsync(new CreateBorrowRequestDto(_tool.Id, 1));
+        //         NavigationService?.Navigate(new PaymentConfirmationPage(res.BorrowId, res.Total));
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         MessageBox.Show("Could not start checkout:\n" + ex.Message, "Error",
+        //             MessageBoxButton.OK, MessageBoxImage.Error);
+        //     }
+        // }
     }
 }
