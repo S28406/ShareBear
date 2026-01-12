@@ -162,25 +162,72 @@ public static class DbSeeder
         context.SaveChanges();
 
         // REVIEWS
-        context.Reviews.Add(new Review
+        var john = users[1];
+        var reviewedTool = tools[0];
+
+        var borrow1 = new Borrow
         {
             Id = Guid.NewGuid(),
-            Rating = 5,
-            Description = "Great product",
-            Date = DateTime.UtcNow,
-            ToolId = tools[0].Id,
-            UserId = users[1].Id
+            UsersId = john.Id,
+            Status = "Paid",
+            Date = DateTime.UtcNow.AddDays(-10),
+            StartDate = DateTime.UtcNow.AddDays(-5).Date,
+            EndDate = DateTime.UtcNow.AddDays(-4).Date,
+            Price = reviewedTool.Price * 1 * 1
+        };
+        context.Borrows.Add(borrow1);
+
+        context.ProductBorrows.Add(new ProductBorrow
+        {
+            Id = Guid.NewGuid(),
+            BorrowId = borrow1.Id,
+            ToolId = reviewedTool.Id,
+            Quantity = 1
         });
 
         context.Reviews.Add(new Review
         {
             Id = Guid.NewGuid(),
-            Rating = 3,
-            Description = "Okay",
-            Date = DateTime.UtcNow,
-            ToolId = tools[0].Id,
-            UserId = users[1].Id
+            Rating = 5,
+            Description = "Great product",
+            Date = DateTime.UtcNow.AddDays(-3),
+            ToolId = reviewedTool.Id,
+            UserId = john.Id,
+            BorrowId = borrow1.Id,
+            Status = "Approved"
         });
+
+        var borrow2 = new Borrow
+        {
+            Id = Guid.NewGuid(),
+            UsersId = john.Id,
+            Status = "Paid",
+            Date = DateTime.UtcNow.AddDays(-20),
+            StartDate = DateTime.UtcNow.AddDays(-15).Date,
+            EndDate = DateTime.UtcNow.AddDays(-14).Date,
+            Price = reviewedTool.Price * 1 * 1
+        };
+        context.Borrows.Add(borrow2);
+
+        context.ProductBorrows.Add(new ProductBorrow
+        {
+            Id = Guid.NewGuid(),
+            BorrowId = borrow2.Id,
+            ToolId = reviewedTool.Id,
+            Quantity = 1
+        });
+
+        // context.Reviews.Add(new Review
+        // {
+        //     Id = Guid.NewGuid(),
+        //     Rating = 3,
+        //     Description = "Okay",
+        //     Date = DateTime.UtcNow.AddDays(-13),
+        //     ToolId = reviewedTool.Id,
+        //     UserId = john.Id,
+        //     BorrowId = borrow2.Id,
+        //     Status = "Approved"
+        // });
 
         context.SaveChanges();
     }

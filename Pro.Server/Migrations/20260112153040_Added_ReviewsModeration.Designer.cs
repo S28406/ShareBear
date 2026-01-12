@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PRO.Data.Context;
@@ -11,9 +12,11 @@ using PRO.Data.Context;
 namespace PRO_.Migrations
 {
     [DbContext(typeof(ToolLendingContext))]
-    partial class ToolLendingContextModelSnapshot : ModelSnapshot
+    [Migration("20260112153040_Added_ReviewsModeration")]
+    partial class Added_ReviewsModeration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,12 +53,15 @@ namespace PRO_.Migrations
                         .HasColumnType("text")
                         .HasDefaultValue("Pending");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("UsersId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsersId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Borrows");
                 });
@@ -497,7 +503,7 @@ namespace PRO_.Migrations
                 {
                     b.HasOne("PRO.Models.User", "User")
                         .WithMany("Borrows")
-                        .HasForeignKey("UsersId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

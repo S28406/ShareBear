@@ -46,11 +46,22 @@ public class ToolLendingContext : DbContext
             .HasMany(u => u.Tools)
             .WithOne(t => t.User)
             .HasForeignKey(t => t.UsersId);
-
+        
         modelBuilder.Entity<User>()
             .HasMany(u => u.Borrows)
             .WithOne(b => b.User)
             .HasForeignKey(b => b.UsersId);
+        
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Reviews)
+            .WithOne(r => r.User)
+            .HasForeignKey(r => r.UserId);
+        
+        modelBuilder.Entity<Borrow>()
+            .HasMany(b => b.Reviews)
+            .WithOne(r => r.Borrow)
+            .HasForeignKey(r => r.BorrowId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Tool>()
             .HasMany(t => t.Schedules)
@@ -82,8 +93,11 @@ public class ToolLendingContext : DbContext
             .WithMany(b => b.Returns)
             .HasForeignKey(r => r.BorrowsId);
         
-        
-        modelBuilder.Entity<Borrow>().HasKey(u => u.Id);
+        modelBuilder.Entity<Review>(e =>
+        {
+            e.Property(x => x.Status).HasDefaultValue("Pending");
+            e.HasIndex(x => new { x.BorrowId, x.ToolId, x.UserId }).IsUnique();
+        });
         modelBuilder.Entity<Category>().HasKey(u => u.Id);
         modelBuilder.Entity<Event>().HasKey(u => u.Id);
         modelBuilder.Entity<History>().HasKey(u => u.Id);
@@ -92,7 +106,6 @@ public class ToolLendingContext : DbContext
         modelBuilder.Entity<Payment>().HasKey(u => u.Id);
         modelBuilder.Entity<ProductBorrow>().HasKey(u => u.Id);
         modelBuilder.Entity<Return>().HasKey(u => u.Id);
-        modelBuilder.Entity<Review>().HasKey(u => u.Id);
         modelBuilder.Entity<Schedule>().HasKey(u => u.Id);
         modelBuilder.Entity<SecurityDeposit>().HasKey(u => u.Id);
         modelBuilder.Entity<Tool>().HasKey(u => u.Id);

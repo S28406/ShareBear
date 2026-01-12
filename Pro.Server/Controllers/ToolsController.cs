@@ -163,7 +163,10 @@ public class ToolsController : ControllerBase
 
         if (tool is null) return NotFound();
 
+        var isAdmin = User?.Identity?.IsAuthenticated == true && IsAdmin();
+
         var reviews = tool.Reviews
+            .Where(r => isAdmin || r.Status == "Approved")
             .OrderByDescending(r => r.Date)
             .Select(r => new ReviewDto(
                 r.Id,
@@ -173,6 +176,17 @@ public class ToolsController : ControllerBase
                 new UserDtos(r.User.Id, r.User.Username, r.User.Email, r.User.Role)
             ))
             .ToList();
+        
+        // var reviews = tool.Reviews
+        //     .OrderByDescending(r => r.Date)
+        //     .Select(r => new ReviewDto(
+        //         r.Id,
+        //         r.Rating,
+        //         r.Description,
+        //         r.Date,
+        //         new UserDtos(r.User.Id, r.User.Username, r.User.Email, r.User.Role)
+        //     ))
+        //     .ToList();
 
         var dto = new ToolDetailsDto(
             tool.Id,

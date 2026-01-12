@@ -12,6 +12,21 @@ public record ToolListItemDto(
     string Location
 );
 
+public record CreateReviewRequestDto(int Rating, string Description);
+
+public record CreateReviewResponseDto(Guid ReviewId, string Status);
+
+public record PendingReviewDto(
+    Guid ReviewId,
+    Guid ToolId,
+    string ToolName,
+    Guid BorrowId,
+    int Rating,
+    string Description,
+    DateTime Date,
+    UserDtos User
+);
+
 public record ReviewDto(
     Guid Id,
     int Rating,

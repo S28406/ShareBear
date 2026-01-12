@@ -22,4 +22,10 @@ public class Review
     [Required]
     public Guid UserId { get; set; }
     public User User { get; set; }
+    
+    [Required] 
+    public Guid BorrowId { get; set; }
+    public Borrow Borrow { get; set; } = null!;
+    [Required] 
+    public string Status { get; set; } = "Pending";
 }

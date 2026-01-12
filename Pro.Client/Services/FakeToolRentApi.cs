@@ -314,4 +314,29 @@ public sealed class FakeToolRentApi : IToolRentApi
 
         return Task.FromResult((IReadOnlyList<PaymentHistoryItemDto>)q.OrderByDescending(p => p.Date).ToList());
     }
+
+    public Task<CreateReviewResponseDto> CreateReviewAsync(Guid toolId, CreateReviewRequestDto req)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IReadOnlyList<PendingReviewDto>> GetPendingReviewsAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task ApproveReviewAsync(Guid reviewId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RejectReviewAsync(Guid reviewId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteReviewAsync(Guid toolId, Guid reviewId)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -35,4 +35,11 @@ public interface IToolRentApi
     Task<PaymentConfirmResponseDto> ConfirmPaymentAsync(Pro.Shared.Dtos.PaymentConfirmRequestDto req);
     Task<ReceiptDto> GetReceiptAsync(Guid paymentId);
     Task<IReadOnlyList<PaymentHistoryItemDto>> GetPaymentHistoryAsync(DateTime? fromUtc, DateTime? toUtc);
+    
+    //Reviews
+    Task<CreateReviewResponseDto> CreateReviewAsync(Guid toolId, CreateReviewRequestDto req);
+    Task<IReadOnlyList<PendingReviewDto>> GetPendingReviewsAsync();
+    Task ApproveReviewAsync(Guid reviewId);
+    Task RejectReviewAsync(Guid reviewId);
+    public Task DeleteReviewAsync(Guid toolId, Guid reviewId);
 }

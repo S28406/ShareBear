@@ -197,4 +197,50 @@ public sealed class HttpToolRentApi : IToolRentApi
         var url = "api/payments/history" + (qs.Count > 0 ? "?" + string.Join("&", qs) : "");
         return await _http.GetFromJsonAsync<List<PaymentHistoryItemDto>>(url) ?? new List<PaymentHistoryItemDto>();
     }
+    
+    // Reviews
+    public async Task<CreateReviewResponseDto> CreateReviewAsync(Guid toolId, CreateReviewRequestDto req)
+    {
+        ApplyAuth();
+        var resp = await _http.PostAsJsonAsync($"api/tools/{toolId}/reviews", req);
+        resp.EnsureSuccessStatusCode();
+
+        return (await resp.Content.ReadFromJsonAsync<CreateReviewResponseDto>())
+               ?? throw new Exception("Empty create review response");
+    }
+
+    public async Task<IReadOnlyList<PendingReviewDto>> GetPendingReviewsAsync()
+    {
+        ApplyAuth();
+        return await _http.GetFromJsonAsync<List<PendingReviewDto>>("api/reviews/pending") ?? new();
+    }
+
+    public async Task ApproveReviewAsync(Guid reviewId)
+    {
+        ApplyAuth();
+        var resp = await _http.PostAsync($"api/reviews/{reviewId}/approve", content: null);
+        resp.EnsureSuccessStatusCode();
+    }
+
+    public async Task RejectReviewAsync(Guid reviewId)
+    {
+        ApplyAuth();
+        var resp = await _http.PostAsync($"api/reviews/{reviewId}/reject", content: null);
+        resp.EnsureSuccessStatusCode();
+    }
+    
+    public async Task DeleteReviewAsync(Guid toolId, Guid reviewId)
+    {
+        ApplyAuth();
+        var resp = await _http.DeleteAsync($"api/tools/{toolId}/reviews/{reviewId}");
+
+        if (!resp.IsSuccessStatusCode)
+        {
+            var body = await resp.Content.ReadAsStringAsync();
+            var details = string.IsNullOrWhiteSpace(body) ? "(no response body)" : body;
+            throw new InvalidOperationException($"{(int)resp.StatusCode} {resp.ReasonPhrase}: {details}");
+        }
+    }
+
+
 }

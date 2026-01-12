@@ -33,4 +33,5 @@ public class Borrow
     public ICollection<Return> Returns { get; set; } = new List<Return>();
     public ICollection<ProductBorrow> ProductBorrows { get; set; } = new List<ProductBorrow>();
     public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+    public ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

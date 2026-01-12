@@ -12,7 +12,7 @@ namespace Pro.Client.Views
     {
         private readonly Guid _toolId;
         private ToolDetailsDto? _tool;
-
+        public bool IsAdmin => AppState.CurrentUser?.Role == "Admin";
         public ToolDetailsPage(Guid toolId)
         {
             InitializeComponent();
@@ -83,5 +83,66 @@ namespace Pro.Client.Views
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private async void LeaveReview_Click(object sender, RoutedEventArgs e)
+        {
+            if (_tool is null) return;
+
+            if (AppState.CurrentUser is null)
+            {
+                MessageBox.Show("Please sign in to leave a review.", "Sign in required",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dlg = new LeaveReviewDialog();
+            if (dlg.ShowDialog() != true) return;
+
+            try
+            {
+                var res = await Api.Instance.CreateReviewAsync(
+                    _tool.Id,
+                    new CreateReviewRequestDto(dlg.Rating, dlg.Description)
+                );
+
+                MessageBox.Show($"Review submitted. Status: {res.Status}", "Thanks!",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not submit review:\n" + ex.Message, "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private async void DeleteReview_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn || btn.Tag is not Guid reviewId)
+                return;
+
+            if (AppState.CurrentUser?.Role != "Admin")
+            {
+                MessageBox.Show("Only admins can delete reviews.");
+                return;
+            }
+
+            var confirm = MessageBox.Show("Delete this review permanently?",
+                "Confirm delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (confirm != MessageBoxResult.Yes) return;
+
+            try
+            {
+                await Api.Instance.DeleteReviewAsync(_toolId, reviewId);
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to delete review:\n" + ex.Message, "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
     }
 }
