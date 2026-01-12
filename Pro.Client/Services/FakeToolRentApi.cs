@@ -284,11 +284,26 @@ public sealed class FakeToolRentApi : IToolRentApi
     public Task<IReadOnlyList<string>> GetBorrowItemNamesAsync(Guid borrowId)
         => Task.FromResult((IReadOnlyList<string>)new List<string> { "— (fake items)" });
 
-    public Task ConfirmPaymentAsync(PaymentConfirmRequestDto req)
+    public Task<PaymentInitiateResponseDto> InitiatePaymentAsync(PaymentInitiateRequestDto req)
     {
-        _payments.Add(new PaymentHistoryItemDto(Guid.NewGuid(), DateTime.UtcNow, req.Amount, req.Status, req.Method, req.BorrowId));
-        return Task.CompletedTask;
+        throw new NotImplementedException();
     }
+
+    Task<PaymentConfirmResponseDto> IToolRentApi.ConfirmPaymentAsync(PaymentConfirmRequestDto req)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ReceiptDto> GetReceiptAsync(Guid paymentId)
+    {
+        throw new NotImplementedException();
+    }
+
+    // public Task ConfirmPaymentAsync(PaymentConfirmRequestDto req)
+    // {
+    //     _payments.Add(new PaymentHistoryItemDto(Guid.NewGuid(), DateTime.UtcNow));
+    //     return Task.CompletedTask;
+    // }
 
     public Task<IReadOnlyList<PaymentHistoryItemDto>> GetPaymentHistoryAsync(DateTime? fromUtc, DateTime? toUtc)
     {

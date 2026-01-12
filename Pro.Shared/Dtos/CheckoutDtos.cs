@@ -14,9 +14,6 @@ public record CreateBorrowResponseDto(
     DateTime EndDate
 );
 
-
-public record PaymentConfirmRequestDto(Guid BorrowId, decimal Amount, string Method, string Status);
-
 public record PaymentHistoryItemDto(
     Guid PaymentId,
     DateTime Date,

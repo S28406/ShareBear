@@ -31,6 +31,8 @@ public interface IToolRentApi
     // Borrow + Payment + History
     Task<CreateBorrowResponseDto> CreateBorrowAsync(CreateBorrowRequestDto req);
     Task<IReadOnlyList<string>> GetBorrowItemNamesAsync(Guid borrowId);
-    Task ConfirmPaymentAsync(PaymentConfirmRequestDto req);
+    Task<PaymentInitiateResponseDto> InitiatePaymentAsync(PaymentInitiateRequestDto req);
+    Task<PaymentConfirmResponseDto> ConfirmPaymentAsync(Pro.Shared.Dtos.PaymentConfirmRequestDto req);
+    Task<ReceiptDto> GetReceiptAsync(Guid paymentId);
     Task<IReadOnlyList<PaymentHistoryItemDto>> GetPaymentHistoryAsync(DateTime? fromUtc, DateTime? toUtc);
 }

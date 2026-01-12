@@ -142,6 +142,35 @@ public sealed class HttpToolRentApi : IToolRentApi
     }
 
     // Borrow + Payment + History
+    public async Task<PaymentInitiateResponseDto> InitiatePaymentAsync(PaymentInitiateRequestDto req)
+    {
+        ApplyAuth();
+        var resp = await _http.PostAsJsonAsync("api/payments/initiate", req);
+        resp.EnsureSuccessStatusCode();
+
+        return (await resp.Content.ReadFromJsonAsync<PaymentInitiateResponseDto>())
+               ?? throw new Exception("Empty initiate payment response");
+    }
+    
+    public async Task<PaymentConfirmResponseDto> ConfirmPaymentAsync(Pro.Shared.Dtos.PaymentConfirmRequestDto req)
+    {
+        ApplyAuth();
+        var resp = await _http.PostAsJsonAsync("api/payments/confirm", req);
+        resp.EnsureSuccessStatusCode();
+
+        return (await resp.Content.ReadFromJsonAsync<PaymentConfirmResponseDto>())
+               ?? throw new Exception("Empty confirm payment response");
+    }
+    
+    public async Task<ReceiptDto> GetReceiptAsync(Guid paymentId)
+    {
+        ApplyAuth();
+        var resp = await _http.GetAsync($"api/payments/{paymentId}/receipt");
+        resp.EnsureSuccessStatusCode();
+
+        return (await resp.Content.ReadFromJsonAsync<ReceiptDto>())
+               ?? throw new Exception("Empty receipt response");
+    }
     public async Task<CreateBorrowResponseDto> CreateBorrowAsync(CreateBorrowRequestDto req)
     {
         ApplyAuth();
@@ -153,13 +182,9 @@ public sealed class HttpToolRentApi : IToolRentApi
     }
 
     public async Task<IReadOnlyList<string>> GetBorrowItemNamesAsync(Guid borrowId)
-        => await _http.GetFromJsonAsync<List<string>>($"api/borrows/{borrowId}/items") ?? new List<string>();
-
-    public async Task ConfirmPaymentAsync(PaymentConfirmRequestDto req)
     {
         ApplyAuth();
-        var resp = await _http.PostAsJsonAsync("api/payments/confirm", req);
-        resp.EnsureSuccessStatusCode();
+        return await _http.GetFromJsonAsync<List<string>>($"api/borrows/{borrowId}/items") ?? new List<string>();
     }
 
     public async Task<IReadOnlyList<PaymentHistoryItemDto>> GetPaymentHistoryAsync(DateTime? fromUtc, DateTime? toUtc)

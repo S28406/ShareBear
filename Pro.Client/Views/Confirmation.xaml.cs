@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Pro.Client;
 using Pro.Client.Services;
 using Pro.Shared.Dtos;
 
@@ -16,6 +15,8 @@ namespace Pro.Client.Views
         private readonly decimal _total;
         private readonly DateTime _start;
         private readonly DateTime _end;
+
+        private Guid? _paymentId;
 
         public PaymentConfirmationPage(Guid borrowId, decimal total, DateTime start, DateTime end)
         {
@@ -65,13 +66,10 @@ namespace Pro.Client.Views
         private string GetSelectedMethod()
             => (MethodBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "";
 
-        private string GetSuggestedStatus(string method)
-            => string.Equals(method, "Cash", StringComparison.OrdinalIgnoreCase) ? "Pending" : "Completed";
-
         private void MethodBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var method = GetSelectedMethod();
-            StatusPreview.Text = string.IsNullOrEmpty(method) ? "—" : GetSuggestedStatus(method);
+            StatusPreview.Text = string.IsNullOrEmpty(method) ? "—" : "Initiated → Confirmed";
             UpdateConfirmEnabled();
         }
 
@@ -102,12 +100,27 @@ namespace Pro.Client.Views
             var method = GetSelectedMethod();
             if (string.IsNullOrEmpty(method)) { ShowError("Please choose a payment method."); return; }
 
-            var status = GetSuggestedStatus(method);
-
             try
             {
-                await Api.Instance.ConfirmPaymentAsync(new PaymentConfirmRequestDto(_borrowId, _total, method, status));
-                MessageBox.Show("Payment confirmed.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (_paymentId is null)
+                {
+                    var initiated = await Api.Instance.InitiatePaymentAsync(
+                        new PaymentInitiateRequestDto(_borrowId, method)
+                    );
+                    _paymentId = initiated.PaymentId;
+                }
+
+                var confirmed = await Api.Instance.ConfirmPaymentAsync(
+                    new Pro.Shared.Dtos.PaymentConfirmRequestDto(_paymentId.Value, method)
+                );
+
+                MessageBox.Show(
+                    $"Payment confirmed.\nReceipt: {confirmed.ReceiptNumber}",
+                    "Success",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
+
                 NavigationService?.Navigate(new History());
             }
             catch (Exception ex)
