@@ -8,7 +8,6 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Sidebar Filters -->
         <StackPanel Background="#F5F7FA" Grid.Column="0" >
             <TextBlock Text="Category" FontSize="16" FontWeight="Bold" Margin="0,0,0,8"/>
             <ComboBox x:Name="CategoryFilterComboBox" SelectionChanged="Filter_Changed"/>
@@ -31,7 +30,6 @@
                      ToolTip="Leave empty for no maximum"/>
         </StackPanel>
 
-        <!-- Content -->
         <StackPanel Grid.Column="1" Margin="20,0,0,0">
             <TextBlock Text="Tools" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
             <ScrollViewer VerticalScrollBarVisibility="Auto">

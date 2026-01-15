@@ -354,4 +354,14 @@ public sealed class FakeToolRentApi : IToolRentApi
     {
         throw new NotImplementedException();
     }
+
+    public Task<IReadOnlyList<AdminUserRowDto>> AdminGetUsersAsync(string? search)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task AdminUpdateUserRoleAsync(Guid userId, UpdateUserRoleRequestDto req)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -270,6 +270,24 @@ public sealed class HttpToolRentApi : IToolRentApi
         resp.EnsureSuccessStatusCode();
     }
     
+    public async Task<IReadOnlyList<AdminUserRowDto>> AdminGetUsersAsync(string? search)
+    {
+        ApplyAuth();
+        var url = "api/admin/users";
+
+        if (!string.IsNullOrWhiteSpace(search))
+            url += $"?search={Uri.EscapeDataString(search.Trim())}";
+
+        return await _http.GetFromJsonAsync<List<AdminUserRowDto>>(url) ?? new List<AdminUserRowDto>();
+    }
+
+    public async Task AdminUpdateUserRoleAsync(Guid userId, UpdateUserRoleRequestDto req)
+    {
+        ApplyAuth();
+        var resp = await _http.PutAsJsonAsync($"api/admin/users/{userId}/role", req);
+        resp.EnsureSuccessStatusCode();
+    }
+    
     public async Task<ReturnDto?> TryGetReturnAsync(Guid borrowId)
     {
         ApplyAuth();

@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="ToolRent" Height="900" Width="1440" Background="#F8FAFC">
     <DockPanel LastChildFill="True">
-        <!-- Header -->
         <Border DockPanel.Dock="Top" Background="White" BorderBrush="#E7EDF4" BorderThickness="0,0,0,1" Padding="20,10">
             <DockPanel>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,40,0">
@@ -23,6 +22,10 @@
                         Click="Search_Click"
                         Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right" VerticalAlignment="Center">
+                    <Button x:Name="AdminBtn" Content="Admin" Click="GoAdmin_Click"
+                            Width="80" Height="30" Margin="5,0"
+                            Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"
+                            Visibility="Collapsed"/>
                     <Button x:Name="AddProductBtn" Content="Add Product" Click="GoAddProduct_Click"
                             Width="110" Height="30" Margin="5,0"
                             Background="#0B80F4" Foreground="White" FontWeight="Bold"
@@ -50,11 +53,6 @@
                             Width="84" Height="30" Margin="5,0"
                             Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"
                             Visibility="Collapsed"/>
-                    
-                    <!-- <Button Content="Register" Click="GoRegister_Click" Width="84" Height="30" Margin="5,0" Background="#0C7FF2" Foreground="White" FontWeight="Bold"/> -->
-                    <!-- <Button Content="History" Click="GoHistory_Click" Width="100" Height="30" Margin="5,0" -->
-                    <!--         Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/> -->
-                    <!-- <Button Content="Sign In" Click="GoLogin_Click" Width="84" Height="30" Margin="5,0" Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/> -->
                 </StackPanel>
             </DockPanel>
         </Border>

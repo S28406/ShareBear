@@ -18,7 +18,6 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Header -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,16">
                     <TextBlock Text="Purchase History" FontSize="24" FontWeight="Bold" />
                     <Border Background="#E7EDF4" BorderBrush="#CEDBE9" BorderThickness="1" CornerRadius="6"
@@ -27,7 +26,6 @@
                     </Border>
                 </StackPanel>
 
-                <!-- Filters -->
                 <Border Grid.Row="1" Background="White" BorderBrush="#E7EDF4" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,16">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -74,7 +72,6 @@
                     </Grid>
                 </Border>
 
-                <!-- Table -->
                 <Border Grid.Row="2" Background="White" BorderBrush="#E7EDF4" BorderThickness="1" CornerRadius="12" Padding="0">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -124,7 +121,6 @@
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <!-- Empty state -->
                         <Border Grid.Row="0" Background="Transparent"
                                 Visibility="{Binding ElementName=GridPayments, Path=HasItems, Converter={StaticResource BoolToVisibilityInverseConverter}}">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16">
@@ -134,7 +130,6 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- Footer -->
                         <DockPanel Grid.Row="1" Margin="12">
                             <TextBlock x:Name="FooterText" DockPanel.Dock="Right" TextAlignment="Right" />
                         </DockPanel>

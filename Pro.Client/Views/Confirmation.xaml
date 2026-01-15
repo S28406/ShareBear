@@ -12,12 +12,10 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Header -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,16">
                     <TextBlock Text="Confirm your payment" FontSize="24" FontWeight="Bold"/>
                 </StackPanel>
 
-                <!-- Card -->
                 <Border Grid.Row="1" Background="White" BorderBrush="#E7EDF4" BorderThickness="1" CornerRadius="12" Padding="20">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -25,7 +23,6 @@
                             <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Left: order summary -->
                         <StackPanel Grid.Column="0" Margin="0,0,12,0">
                             <TextBlock Text="Order summary" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
                             <StackPanel>

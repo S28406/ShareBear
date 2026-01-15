@@ -11,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// Swagger + JWT support
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Pro.Server", Version = "v1" });
@@ -38,7 +37,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// EF Core
 builder.Services.AddDbContext<ToolLendingContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -46,7 +44,6 @@ builder.Services.AddDbContext<ToolLendingContext>(options =>
     )
 );
 
-// JWT auth
 var jwt = builder.Configuration.GetSection("Jwt");
 var issuer = jwt["Issuer"];
 var audience = jwt["Audience"];
@@ -81,7 +78,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 
-    // Auto apply migrations + seed (DEV only)
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ToolLendingContext>();
     db.Database.Migrate();
@@ -90,8 +86,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 
-app.UseAuthentication(); // IMPORTANT
-app.UseAuthorization();  // IMPORTANT
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.Run();

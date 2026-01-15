@@ -48,5 +48,9 @@ public interface IToolRentApi
     Task<ReturnDto> GetReturnAsync(Guid borrowId);
     Task FinalizeReturnAsync(Guid borrowId, FinalizeReturnRequestDto req);
     Task<ReturnDto?> TryGetReturnAsync(Guid borrowId);
+    
+    //User
+    Task<IReadOnlyList<AdminUserRowDto>> AdminGetUsersAsync(string? search);
+    Task AdminUpdateUserRoleAsync(Guid userId, UpdateUserRoleRequestDto req);
 
 }

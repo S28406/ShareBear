@@ -48,13 +48,26 @@ namespace Pro.Client.Views
         private void UpdateAuthButtons()
         {
             var loggedIn = AppState.CurrentUser is not null && !string.IsNullOrWhiteSpace(AppState.Token);
-
+            
+            AdminBtn.Visibility = AppState.CurrentUser?.Role == "Admin" ? Visibility.Visible : Visibility.Collapsed;
+            
             RegisterBtn.Visibility = loggedIn ? Visibility.Collapsed : Visibility.Visible;
             LoginBtn.Visibility = loggedIn ? Visibility.Collapsed : Visibility.Visible;
 
             LogoutBtn.Visibility = loggedIn ? Visibility.Visible : Visibility.Collapsed;
             HistoryBtn.Visibility = loggedIn ? Visibility.Visible : Visibility.Collapsed;
         }
+        private void GoAdmin_Click(object sender, RoutedEventArgs e)
+        {
+            if (AppState.CurrentUser?.Role != "Admin")
+            {
+                MessageBox.Show("Admins only.");
+                return;
+            }
+
+            ContentFrame.Navigate(new AdminUsersPage());
+        }
+
         private void GoMyTools_Click(object sender, RoutedEventArgs e)
         {
             if (!RoleHelper.IsSellerOrAdmin(AppState.CurrentUser))
