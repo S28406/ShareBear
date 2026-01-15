@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using Pro.Client.Helpers;
+using Pro.Client.Services;
 using History = Pro.Client.Views.History;
 
 namespace Pro.Client.Views
@@ -18,6 +19,7 @@ namespace Pro.Client.Views
         public void RefreshHeader()
         {
             UpdateAddProductVisibility();
+            UpdateAuthButtons();
         }
 
         private void Search_Click(object sender, RoutedEventArgs e)
@@ -42,7 +44,17 @@ namespace Pro.Client.Views
             AddProductBtn.Visibility = canManage ? Visibility.Visible : Visibility.Collapsed;
             MyToolsBtn.Visibility = canManage ? Visibility.Visible : Visibility.Collapsed;
         }
-        
+
+        private void UpdateAuthButtons()
+        {
+            var loggedIn = AppState.CurrentUser is not null && !string.IsNullOrWhiteSpace(AppState.Token);
+
+            RegisterBtn.Visibility = loggedIn ? Visibility.Collapsed : Visibility.Visible;
+            LoginBtn.Visibility = loggedIn ? Visibility.Collapsed : Visibility.Visible;
+
+            LogoutBtn.Visibility = loggedIn ? Visibility.Visible : Visibility.Collapsed;
+            HistoryBtn.Visibility = loggedIn ? Visibility.Visible : Visibility.Collapsed;
+        }
         private void GoMyTools_Click(object sender, RoutedEventArgs e)
         {
             if (!RoleHelper.IsSellerOrAdmin(AppState.CurrentUser))
@@ -54,7 +66,14 @@ namespace Pro.Client.Views
 
             ContentFrame.Navigate(new MyToolsPage());
         }
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            AppState.CurrentUser = null;
+            AppState.Token = null;
 
+            RefreshHeader();
+            ContentFrame.Navigate(new ToolListPage());
+        }
         private void GoRegister_Click(object sender, RoutedEventArgs e)
             => ContentFrame.Navigate(new RegPage());
 
@@ -75,12 +94,6 @@ namespace Pro.Client.Views
 
         private void GoHistory_Click(object sender, RoutedEventArgs e)
         {
-            if (AppState.CurrentUser is null)
-            {
-                MessageBox.Show("Please sign in to view your purchase history.");
-                return;
-            }
-
             ContentFrame.Navigate(new History());
         }
     }

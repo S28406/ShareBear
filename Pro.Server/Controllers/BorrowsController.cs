@@ -19,6 +19,7 @@ public class BorrowsController : ControllerBase
         => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     private static readonly string[] ActiveStatuses = { "Pending", "Paid", "Confirmed" };
+    private bool IsAdmin() => User.IsInRole("Admin");
 
     [Authorize]
     [HttpPost]
@@ -135,5 +136,101 @@ public class BorrowsController : ControllerBase
 
         return Ok(names);
     }
+    
+    [Authorize]
+[HttpPost("{borrowId:guid}/return")]
+public async Task<ActionResult<ReturnDto>> CreateReturn(Guid borrowId, [FromBody] CreateReturnRequestDto req)
+{
+    if (string.IsNullOrWhiteSpace(req.Condition)) return BadRequest("Condition is required.");
+    if (string.IsNullOrWhiteSpace(req.Damage)) return BadRequest("Damage is required.");
+
+    var borrow = await _db.Borrows.FirstOrDefaultAsync(b => b.Id == borrowId);
+    if (borrow is null) return NotFound("Borrow not found");
+
+    var userId = CurrentUserId();
+    if (!IsAdmin() && borrow.UsersId != userId) return Forbid();
+
+    if (borrow.Status != BorrowStatuses.Paid && borrow.Status != BorrowStatuses.Confirmed)
+        return Conflict($"Cannot return borrow in status '{borrow.Status}'.");
+
+
+    var already = await _db.Returns.AnyAsync(r => r.BorrowsId == borrowId);
+    if (already) return Conflict("Return already exists for this borrow.");
+
+    var now = DateTime.UtcNow;
+
+    var ret = new Return
+    {
+        Id = Guid.NewGuid(),
+        Date = now,
+        Condition = req.Condition.Trim(),
+        Damage = req.Damage.Trim(),
+        BorrowsId = borrowId
+    };
+
+    _db.Returns.Add(ret);
+
+    borrow.Status = BorrowStatuses.Returned;
+
+    await _db.SaveChangesAsync();
+
+    return Ok(new ReturnDto(ret.Id, ret.Date, ret.Condition, ret.Damage, ret.BorrowsId));
+}
+
+[Authorize]
+[HttpGet("{borrowId:guid}/return")]
+public async Task<ActionResult<ReturnDto>> GetReturn(Guid borrowId)
+{
+    var borrow = await _db.Borrows.AsNoTracking().FirstOrDefaultAsync(b => b.Id == borrowId);
+    if (borrow is null) return NotFound("Borrow not found");
+
+    var userId = CurrentUserId();
+    if (!IsAdmin() && borrow.UsersId != userId) return Forbid();
+
+    var ret = await _db.Returns.AsNoTracking().FirstOrDefaultAsync(r => r.BorrowsId == borrowId);
+    if (ret is null) return NotFound("Return not found");
+
+    return Ok(new ReturnDto(ret.Id, ret.Date, ret.Condition, ret.Damage, ret.BorrowsId));
+}
+
+[Authorize(Roles = "Admin")]
+[HttpPost("{borrowId:guid}/return/finalize")]
+public async Task<IActionResult> FinalizeReturn(Guid borrowId, [FromBody] FinalizeReturnRequestDto req)
+{
+    var borrow = await _db.Borrows.FirstOrDefaultAsync(b => b.Id == borrowId);
+    if (borrow is null) return NotFound("Borrow not found");
+
+    var ret = await _db.Returns.FirstOrDefaultAsync(r => r.BorrowsId == borrowId);
+    if (ret is null) return NotFound("Return not found");
+
+    if (borrow.Status != BorrowStatuses.Returned)
+        return Conflict($"Borrow must be '{BorrowStatuses.Returned}' to finalize.");
+
+    var pbToolIds = await _db.ProductBorrows
+        .Where(pb => pb.BorrowId == borrowId)
+        .Select(pb => pb.ToolId)
+        .ToListAsync();
+
+    var deposits = await _db.SecurityDeposits
+        .Where(sd => sd.UsersId == borrow.UsersId && pbToolIds.Contains(sd.ToolsId))
+        .OrderByDescending(sd => sd.RefundDate)
+        .ToListAsync();
+
+    var newStatus = (req.Status ?? "").Trim();
+    if (newStatus != DepositStatuses.Refunded && newStatus != DepositStatuses.Withheld)
+        return BadRequest("Invalid deposit status. Allowed: Refunded, Withheld.");
+
+    var now = DateTime.UtcNow;
+    foreach (var d in deposits)
+    {
+        d.Status = newStatus;
+        d.RefundDate = now;
+    }
+
+    borrow.Status = BorrowStatuses.Completed;
+
+    await _db.SaveChangesAsync();
+    return NoContent();
+}
 
 }

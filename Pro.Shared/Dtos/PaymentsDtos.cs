@@ -14,6 +14,15 @@ public static class BorrowStatuses
     public const string Paid = "Paid";
     public const string Confirmed = "Confirmed";
     public const string Cancelled = "Cancelled";
+    public const string Returned = "Returned";
+    public const string Completed = "Completed"; 
+}
+
+public static class DepositStatuses
+{
+    public const string Held = "Held";
+    public const string Refunded = "Refunded";
+    public const string Withheld = "Withheld";
 }
 
 public record PaymentInitiateRequestDto(Guid BorrowId, string? Method);

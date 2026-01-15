@@ -98,6 +98,14 @@ public class ToolLendingContext : DbContext
             e.Property(x => x.Status).HasDefaultValue("Pending");
             e.HasIndex(x => new { x.BorrowId, x.ToolId, x.UserId }).IsUnique();
         });
+        modelBuilder.Entity<SecurityDeposit>(e =>
+        {
+            e.HasOne(sd => sd.User)
+                .WithMany()
+                .HasForeignKey(sd => sd.UsersId);
+
+            e.Property(sd => sd.UsersId).HasColumnName("UserId");
+        });
         modelBuilder.Entity<Category>().HasKey(u => u.Id);
         modelBuilder.Entity<Event>().HasKey(u => u.Id);
         modelBuilder.Entity<History>().HasKey(u => u.Id);

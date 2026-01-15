@@ -299,11 +299,6 @@ public sealed class FakeToolRentApi : IToolRentApi
         throw new NotImplementedException();
     }
 
-    // public Task ConfirmPaymentAsync(PaymentConfirmRequestDto req)
-    // {
-    //     _payments.Add(new PaymentHistoryItemDto(Guid.NewGuid(), DateTime.UtcNow));
-    //     return Task.CompletedTask;
-    // }
 
     public Task<IReadOnlyList<PaymentHistoryItemDto>> GetPaymentHistoryAsync(DateTime? fromUtc, DateTime? toUtc)
     {
@@ -336,6 +331,26 @@ public sealed class FakeToolRentApi : IToolRentApi
     }
 
     public Task DeleteReviewAsync(Guid toolId, Guid reviewId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ReturnDto> CreateReturnAsync(Guid borrowId, CreateReturnRequestDto req)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ReturnDto> GetReturnAsync(Guid borrowId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task FinalizeReturnAsync(Guid borrowId, FinalizeReturnRequestDto req)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ReturnDto?> TryGetReturnAsync(Guid borrowId)
     {
         throw new NotImplementedException();
     }

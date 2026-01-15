@@ -241,6 +241,47 @@ public sealed class HttpToolRentApi : IToolRentApi
             throw new InvalidOperationException($"{(int)resp.StatusCode} {resp.ReasonPhrase}: {details}");
         }
     }
+    
+    // Returns
+    public async Task<ReturnDto> CreateReturnAsync(Guid borrowId, CreateReturnRequestDto req)
+    {
+        ApplyAuth();
+        var resp = await _http.PostAsJsonAsync($"api/borrows/{borrowId}/return", req);
+        resp.EnsureSuccessStatusCode();
+
+        return (await resp.Content.ReadFromJsonAsync<ReturnDto>())
+               ?? throw new Exception("Empty create return response");
+    }
+
+    public async Task<ReturnDto> GetReturnAsync(Guid borrowId)
+    {
+        ApplyAuth();
+        var resp = await _http.GetAsync($"api/borrows/{borrowId}/return");
+        resp.EnsureSuccessStatusCode();
+
+        return (await resp.Content.ReadFromJsonAsync<ReturnDto>())
+               ?? throw new Exception("Empty return response");
+    }
+
+    public async Task FinalizeReturnAsync(Guid borrowId, FinalizeReturnRequestDto req)
+    {
+        ApplyAuth();
+        var resp = await _http.PostAsJsonAsync($"api/borrows/{borrowId}/return/finalize", req);
+        resp.EnsureSuccessStatusCode();
+    }
+    
+    public async Task<ReturnDto?> TryGetReturnAsync(Guid borrowId)
+    {
+        ApplyAuth();
+        var resp = await _http.GetAsync($"api/borrows/{borrowId}/return");
+
+        if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
+            return null;
+
+        resp.EnsureSuccessStatusCode();
+
+        return await resp.Content.ReadFromJsonAsync<ReturnDto>();
+    }
 
 
 }

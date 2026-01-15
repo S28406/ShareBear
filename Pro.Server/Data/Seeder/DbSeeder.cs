@@ -1,5 +1,6 @@
 ﻿using PRO.Data.Context;
 using PRO.Models;
+using Pro.Shared.Dtos;
 using ToolRent.Security;
 
 namespace PRO_.Data.Seeder;
@@ -229,6 +230,46 @@ public static class DbSeeder
         //     Status = "Approved"
         // });
 
+        
+        //Returns
+        var borrowReturned = new Borrow
+        {
+            Id = Guid.NewGuid(),
+            UsersId = john.Id,
+            Status = BorrowStatuses.Returned,
+            Date = DateTime.UtcNow.AddDays(-8),
+            StartDate = DateTime.UtcNow.AddDays(-7).Date,
+            EndDate = DateTime.UtcNow.AddDays(-6).Date,
+            Price = reviewedTool.Price
+        };
+        context.Borrows.Add(borrowReturned);
+
+        context.ProductBorrows.Add(new ProductBorrow
+        {
+            Id = Guid.NewGuid(),
+            BorrowId = borrowReturned.Id,
+            ToolId = reviewedTool.Id,
+            Quantity = 1
+        });
+
+        context.Returns.Add(new Return
+        {
+            Id = Guid.NewGuid(),
+            BorrowsId = borrowReturned.Id,
+            Date = DateTime.UtcNow.AddDays(-6),
+            Condition = "Clean, working.",
+            Damage = "None"
+        });
+
+        context.SecurityDeposits.Add(new SecurityDeposit
+        {
+            Id = Guid.NewGuid(),
+            ToolsId = reviewedTool.Id,
+            UsersId = john.Id,
+            Ammount = 50f,
+            Status = DepositStatuses.Held,
+            RefundDate = DateTime.UtcNow.AddDays(-6)
+        });
         context.SaveChanges();
     }
 }

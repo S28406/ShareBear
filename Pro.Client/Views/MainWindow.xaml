@@ -32,10 +32,29 @@
                             Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"
                             Visibility="Collapsed"/>
 
-                    <Button Content="Register" Click="GoRegister_Click" Width="84" Height="30" Margin="5,0" Background="#0C7FF2" Foreground="White" FontWeight="Bold"/>
-                    <Button Content="History" Click="GoHistory_Click" Width="100" Height="30" Margin="5,0"
+                    
+                    <Button x:Name="RegisterBtn" Content="Register" Click="GoRegister_Click"
+                            Width="84" Height="30" Margin="5,0"
+                            Background="#0C7FF2" Foreground="White" FontWeight="Bold"/>
+
+                    <Button x:Name="HistoryBtn" Content="History" Click="GoHistory_Click"
+                            Width="100" Height="30" Margin="5,0"
+                            Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"
+                            Visibility="Collapsed"/>
+
+                    <Button x:Name="LoginBtn" Content="Sign In" Click="GoLogin_Click"
+                            Width="84" Height="30" Margin="5,0"
                             Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/>
-                    <Button Content="Sign In" Click="GoLogin_Click" Width="84" Height="30" Margin="5,0" Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/>
+
+                    <Button x:Name="LogoutBtn" Content="Log out" Click="Logout_Click"
+                            Width="84" Height="30" Margin="5,0"
+                            Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"
+                            Visibility="Collapsed"/>
+                    
+                    <!-- <Button Content="Register" Click="GoRegister_Click" Width="84" Height="30" Margin="5,0" Background="#0C7FF2" Foreground="White" FontWeight="Bold"/> -->
+                    <!-- <Button Content="History" Click="GoHistory_Click" Width="100" Height="30" Margin="5,0" -->
+                    <!--         Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/> -->
+                    <!-- <Button Content="Sign In" Click="GoLogin_Click" Width="84" Height="30" Margin="5,0" Background="#E7EDF4" Foreground="#0D141C" FontWeight="Bold"/> -->
                 </StackPanel>
             </DockPanel>
         </Border>
@@ -50,10 +69,7 @@
                 <TextBlock Text="@2024 ToolRent. All rights reserved." HorizontalAlignment="Center" Foreground="#49739c"/>
             </StackPanel>
         </Border>
-        <!-- Pages live here -->
         <Frame x:Name="ContentFrame" NavigationUIVisibility="Hidden"/>
-
-        <!-- Footer -->
         
     </DockPanel>
 </Window>

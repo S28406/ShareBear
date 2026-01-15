@@ -42,4 +42,11 @@ public interface IToolRentApi
     Task ApproveReviewAsync(Guid reviewId);
     Task RejectReviewAsync(Guid reviewId);
     public Task DeleteReviewAsync(Guid toolId, Guid reviewId);
+    
+    //Reviews
+    Task<ReturnDto> CreateReturnAsync(Guid borrowId, CreateReturnRequestDto req);
+    Task<ReturnDto> GetReturnAsync(Guid borrowId);
+    Task FinalizeReturnAsync(Guid borrowId, FinalizeReturnRequestDto req);
+    Task<ReturnDto?> TryGetReturnAsync(Guid borrowId);
+
 }

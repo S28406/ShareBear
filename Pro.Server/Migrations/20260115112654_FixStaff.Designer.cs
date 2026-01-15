@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PRO.Data.Context;
@@ -11,9 +12,11 @@ using PRO.Data.Context;
 namespace PRO_.Migrations
 {
     [DbContext(typeof(ToolLendingContext))]
-    partial class ToolLendingContextModelSnapshot : ModelSnapshot
+    [Migration("20260115112654_FixStaff")]
+    partial class FixStaff
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -371,12 +374,11 @@ namespace PRO_.Migrations
                     b.Property<Guid>("ToolsId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("UsersId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("UserId");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -384,13 +386,7 @@ namespace PRO_.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("SecurityDeposits", t =>
-                        {
-                            t.Property("UserId")
-                                .HasColumnName("UserId1");
-                        });
+                    b.ToTable("SecurityDeposits");
                 });
 
             modelBuilder.Entity("PRO.Models.Tool", b =>
@@ -658,13 +654,9 @@ namespace PRO_.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PRO.Models.User", null)
-                        .WithMany("SecurityDeposits")
-                        .HasForeignKey("UserId");
-
                     b.HasOne("PRO.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UsersId")
+                        .WithMany("SecurityDeposits")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

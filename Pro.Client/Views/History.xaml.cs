@@ -15,6 +15,7 @@ namespace Pro.Client.Views
 {
     public partial class History : Page
     {
+        public string ReturnStatus { get; set; } = "—";
         private ObservableCollection<PurchaseRowVm> _rows = new();
 
         public History()
@@ -41,13 +42,32 @@ namespace Pro.Client.Views
 
                 var list = await Api.Instance.GetPaymentHistoryAsync(fromUtc, toUtc);
 
-                // status filter (client-side)
                 if (!string.Equals(status, "All", StringComparison.OrdinalIgnoreCase))
                     list = list.Where(p => string.Equals(p.Status, status, StringComparison.OrdinalIgnoreCase)).ToList();
 
-                // search filter (client-side)
                 if (!string.IsNullOrWhiteSpace(search))
                     list = ApplySearch(list, search);
+
+                var borrowIds = list.Select(p => p.OrderId).Distinct().ToList();
+
+                var returnedMap = new System.Collections.Generic.Dictionary<Guid, bool>();
+
+                var tasks = borrowIds.Select(async id =>
+                {
+                    try
+                    {
+                        var ret = await Api.Instance.TryGetReturnAsync(id);
+                        return (id, returned: ret is not null);
+                    }
+                    catch
+                    {
+                        return (id, returned: false);
+                    }
+                });
+
+                var results = await Task.WhenAll(tasks);
+                foreach (var r in results)
+                    returnedMap[r.id] = r.returned;
 
                 var vm = list
                     .OrderByDescending(p => p.Date)
@@ -58,7 +78,10 @@ namespace Pro.Client.Views
                         Amount = p.Amount,
                         Status = p.Status ?? "—",
                         Method = p.Method ?? "—",
-                        OrderId = p.OrderId
+                        OrderId = p.OrderId,
+                        ReturnStatus = (returnedMap.TryGetValue(p.OrderId, out var isReturned) && isReturned)
+                            ? "Returned"
+                            : "—"
                     })
                     .ToList();
 
@@ -73,9 +96,26 @@ namespace Pro.Client.Views
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        public class PurchaseRowVm
+        {
+            public Guid Id { get; set; }
+            public DateTime Date { get; set; }
+            public decimal Amount { get; set; }
+            public string Status { get; set; } = "—";
+            public string Method { get; set; } = "—";
+            public Guid OrderId { get; set; }
 
-        private static System.Collections.Generic.List<PaymentHistoryItemDto> ApplySearch(
-            System.Collections.Generic.IReadOnlyList<PaymentHistoryItemDto> items, string search)
+            public string ReturnStatus { get; set; } = "—";
+
+            public bool IsReturnAllowed =>
+                string.Equals(Status, PaymentStatuses.Confirmed, StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(ReturnStatus, "Returned", StringComparison.OrdinalIgnoreCase);
+
+            public string AmountDisplay => Amount.ToString("C2", CultureInfo.CurrentCulture);
+        }
+        
+        private static List<PaymentHistoryItemDto> ApplySearch(
+            IReadOnlyList<PaymentHistoryItemDto> items, string search)
         {
             var terms = search.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -109,7 +149,6 @@ namespace Pro.Client.Views
                         return false;
                     }
 
-                    // text match
                     if ((p.Method ?? "").Contains(term, StringComparison.OrdinalIgnoreCase)) continue;
                     if ((p.Status ?? "").Contains(term, StringComparison.OrdinalIgnoreCase)) continue;
                     if (p.OrderId.ToString().Contains(term, StringComparison.OrdinalIgnoreCase)) continue;
@@ -162,7 +201,6 @@ namespace Pro.Client.Views
             }
         }
 
-        // ---- UTC helpers ----
         private static DateTime? ToUtcStartOfDay(DateTime? localDate)
         {
             if (!localDate.HasValue) return null;
@@ -182,6 +220,38 @@ namespace Pro.Client.Views
         {
             return DateTime.TryParse(s, CultureInfo.CurrentCulture, DateTimeStyles.None, out date) ||
                    DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
+        }
+        private async void Return_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (((FrameworkElement)sender).DataContext is not PurchaseRowVm row)
+                    return;
+
+                if (!string.Equals(row.Status, PaymentStatuses.Confirmed, StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("Only confirmed payments can be returned.", "Return",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                var dlg = new ReturnDialog { Owner = Window.GetWindow(this) };
+                if (dlg.ShowDialog() != true) return;
+
+                await Api.Instance.CreateReturnAsync(
+                    row.OrderId,
+                    new CreateReturnRequestDto(dlg.Condition, dlg.Damage));
+
+                MessageBox.Show("Return submitted", "Return",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Return failed:\n" + ex.Message, "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 

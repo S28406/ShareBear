@@ -64,6 +64,7 @@
                             <TextBox x:Name="SearchBox" Height="30" KeyDown="SearchBox_KeyDown"/>
                         </StackPanel>
 
+                        
                         <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Bottom">
                             <Button Content="Apply" Click="ApplyFilters_Click"
                                     Background="#0B80F4" Foreground="White" Padding="16,6" Margin="0,0,8,0"/>
@@ -95,7 +96,8 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat={}{0:yyyy-MM-dd HH:mm}}" Width="170"/>
                                 <DataGridTextColumn Header="Amount" Binding="{Binding AmountDisplay}" Width="120"/>
-                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120"/>
+                                <DataGridTextColumn Header="Payment" Binding="{Binding Status}" Width="120"/>
+                                <DataGridTextColumn Header="Return" Binding="{Binding ReturnStatus}" Width="110"/>
                                 <DataGridTextColumn Header="Method" Binding="{Binding Method}" Width="160"/>
                                 <DataGridTextColumn Header="Order ID" Binding="{Binding OrderId}" Width="*"/>
                                 <DataGridTemplateColumn Header="" Width="120">
@@ -103,6 +105,19 @@
                                         <DataTemplate>
                                             <Button Content="Details" Click="Details_Click" Padding="10,4"
                                                     Background="#E7EDF4" Foreground="#0D141C" BorderBrush="#CEDBE9"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="" Width="120">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Return"
+                                                    Click="Return_Click"
+                                                    IsEnabled="{Binding IsReturnAllowed}"
+                                                    Padding="10,4"
+                                                    Background="#FFE8CC"
+                                                    Foreground="#0D141C"
+                                                    BorderBrush="#F2C48C"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

@@ -106,7 +106,6 @@ public class PaymentsController : ControllerBase
 
         if (payment.Status == PaymentStatuses.Confirmed)
         {
-            // idempotent confirm
             var receiptNumberExisting = MakeReceiptNumber(payment.Id, payment.Date);
             return Ok(new PaymentConfirmResponseDto(payment.Id, payment.Status, payment.Date, receiptNumberExisting));
         }
@@ -114,12 +113,29 @@ public class PaymentsController : ControllerBase
         if (payment.Status != PaymentStatuses.Initiated)
             return Conflict($"Cannot confirm payment in status '{payment.Status}'.");
 
-        // Server decides amount/status. Client only supplies method.
         payment.Method = NormalizeMethod(req.Method);
         payment.Status = PaymentStatuses.Confirmed;
 
-        // Borrow becomes Paid (your existing availability logic treats Paid as active)
         borrow.Status = BorrowStatuses.Paid;
+        var toolIds = await _db.ProductBorrows
+            .Where(pb => pb.BorrowId == borrow.Id)
+            .Select(pb => pb.ToolId)
+            .Distinct()
+            .ToListAsync();
+
+        foreach (var toolId in toolIds)
+        {
+            var deposit = new SecurityDeposit
+            {
+                Id = Guid.NewGuid(),
+                ToolsId = toolId,
+                UsersId = borrow.UsersId,
+                Ammount = 50f,
+                Status = DepositStatuses.Held,
+                RefundDate = DateTime.UtcNow
+            };
+            _db.SecurityDeposits.Add(deposit);
+        }
 
         await _db.SaveChangesAsync();
 
@@ -159,7 +175,6 @@ public class PaymentsController : ControllerBase
             })
             .ToList();
 
-        // Use borrow.Price as authoritative total (it’s what you already compute server-side)
         var total = (decimal)borrow.Price;
 
         var receiptNumber = MakeReceiptNumber(payment.Id, payment.Date);
