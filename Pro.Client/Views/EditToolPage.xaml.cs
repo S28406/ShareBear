@@ -41,6 +41,7 @@ public partial class EditToolPage : Page
         DescriptionTextBox.Text = _tool.Description ?? "";
         PriceTextBox.Text = _tool.Price.ToString(CultureInfo.InvariantCulture);
         QuantityTextBox.Text = _tool.Quantity.ToString(CultureInfo.InvariantCulture);
+        LocationTextBox.Text = _tool.Location ?? "";
 
         var match = cats.FirstOrDefault(c => string.Equals(c.Name, _tool.CategoryName, StringComparison.OrdinalIgnoreCase));
         if (match is not null)

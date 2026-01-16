@@ -31,7 +31,7 @@ namespace Pro.Client.Views
             else NavigationService?.Navigate(new ToolListPage());
         }
 
-        private async System.Threading.Tasks.Task LoadDataAsync()
+        private async Task LoadDataAsync()
         {
             _tool = await Api.Instance.GetToolAsync(_toolId);
             if (_tool is null)
@@ -42,9 +42,9 @@ namespace Pro.Client.Views
             }
 
             ToolName.Text = _tool.Name;
-            CategoryName.Text = $"Category: {_tool.CategoryName}";
-            OwnerName.Text = $"Owner: {_tool.OwnerUsername}";
-            PriceText.Text = $"Price: ${_tool.Price:F2} / day";
+            CategoryName.Text = _tool.CategoryName;
+            OwnerName.Text = _tool.OwnerUsername;
+            PriceText.Text = $"${_tool.Price:F2} / day";
             DescriptionText.Text = _tool.Description ?? "";
 
             HeroImage.Source = ImageHelper.Resolve(_tool.ImagePath);
@@ -53,6 +53,7 @@ namespace Pro.Client.Views
                 .OrderByDescending(r => r.Date)
                 .ToList();
         }
+        
         private async void RentButtonClick(object sender, RoutedEventArgs e)
         {
             if (_tool == null) return;

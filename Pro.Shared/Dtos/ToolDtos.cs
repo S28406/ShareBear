@@ -1,6 +1,9 @@
 ﻿namespace Pro.Shared.Dtos;
 
-public record CategoryDto(Guid Id, string Name);
+public record CategoryDto(Guid Id, string Name)
+{
+    public override string ToString() => Name;
+}
 
 public record ToolListItemDto(
     Guid Id,
