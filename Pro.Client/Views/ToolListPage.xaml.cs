@@ -85,7 +85,13 @@ namespace Pro.Client.Views
 
     string? location = (loc == "All") ? null : loc;
     
-    var tools = await Api.Instance.GetToolsAsync(cat, owner, minPrice, maxPrice, location, _searchQuery);
+    var result = await ((HttpToolRentApi)Api.Instance).GetToolsPagedAsync(
+        cat, owner, minPrice, maxPrice, location, _searchQuery,
+        page: 1,
+        pageSize: 24
+    );
+
+    var tools = result.Items;
 
 
     ToolListPanel.Items.Clear();
@@ -95,11 +101,11 @@ namespace Pro.Client.Views
         var card = new Border
         {
             Margin = new Thickness(10),
-            Padding = new Thickness(8),
-            Width = 200,
-            Background = Brushes.White,
-            CornerRadius = new CornerRadius(8),
-            BorderBrush = (Brush)new BrushConverter().ConvertFrom("#E7EDF4")!,
+            Padding = new Thickness(10),
+            Width = 240,
+            Background = (Brush)new BrushConverter().ConvertFrom("#0F1A2E")!,
+            CornerRadius = new CornerRadius(14),
+            BorderBrush = (Brush)new BrushConverter().ConvertFrom("#24314D")!,
             BorderThickness = new Thickness(1),
             Cursor = Cursors.Hand,
             Tag = tool.Id
@@ -121,21 +127,21 @@ namespace Pro.Client.Views
             FontWeight = FontWeights.Bold,
             FontSize = 14,
             Margin = new Thickness(0, 6, 0, 0),
-            Foreground = (Brush)new BrushConverter().ConvertFrom("#0D141C")!
+            Foreground = (Brush)new BrushConverter().ConvertFrom("#E5E7EB")!
         });
 
         stack.Children.Add(new TextBlock
         {
             Text = $"${tool.Price:F2} / day",
             FontSize = 12,
-            Foreground = (Brush)new BrushConverter().ConvertFrom("#48739D")!
+            Foreground = (Brush)new BrushConverter().ConvertFrom("#9CA3AF")!
         });
 
         stack.Children.Add(new TextBlock
         {
             Text = tool.Location,
             FontSize = 12,
-            Foreground = (Brush)new BrushConverter().ConvertFrom("#48739D")!
+            Foreground = (Brush)new BrushConverter().ConvertFrom("#9CA3AF")!
         });
 
         card.MouseLeftButtonUp += (_, __) =>

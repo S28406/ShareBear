@@ -300,6 +300,44 @@ public sealed class HttpToolRentApi : IToolRentApi
 
         return await resp.Content.ReadFromJsonAsync<ReturnDto>();
     }
+    
+    public async Task<PagedResultDto<ToolListItemDto>> GetToolsPagedAsync(
+        string category,
+        string owner,
+        float? minPrice = null,
+        float? maxPrice = null,
+        string? location = null,
+        string? q = null,
+        int page = 1,
+        int pageSize = 24
+    )
+    {
+        if (string.Equals(category, "All", StringComparison.OrdinalIgnoreCase)) category = "";
+        if (string.Equals(owner, "All", StringComparison.OrdinalIgnoreCase)) owner = "";
+
+        var qs = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(category))
+            qs.Add($"category={Uri.EscapeDataString(category)}");
+        if (!string.IsNullOrWhiteSpace(owner))
+            qs.Add($"owner={Uri.EscapeDataString(owner)}");
+        if (minPrice is not null)
+            qs.Add($"minPrice={minPrice.Value.ToString(CultureInfo.InvariantCulture)}");
+        if (maxPrice is not null)
+            qs.Add($"maxPrice={maxPrice.Value.ToString(CultureInfo.InvariantCulture)}");
+        if (!string.IsNullOrWhiteSpace(location))
+            qs.Add($"location={Uri.EscapeDataString(location)}");
+        if (!string.IsNullOrWhiteSpace(q))
+            qs.Add($"search={Uri.EscapeDataString(q.Trim())}");
+
+        qs.Add($"page={page}");
+        qs.Add($"pageSize={pageSize}");
+
+        var url = "api/tools/paged?" + string.Join("&", qs);
+
+        return await _http.GetFromJsonAsync<PagedResultDto<ToolListItemDto>>(url)
+               ?? new PagedResultDto<ToolListItemDto>(Array.Empty<ToolListItemDto>(), page, pageSize, 0);
+    }
 
 
 }

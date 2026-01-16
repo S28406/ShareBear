@@ -119,6 +119,10 @@ public class ToolLendingContext : DbContext
         modelBuilder.Entity<Tool>().HasKey(u => u.Id);
         modelBuilder.Entity<ToolAccessory>().HasKey(u => u.Id);
         modelBuilder.Entity<User>().HasKey(u => u.Id);
+        modelBuilder.Entity<Tool>().HasIndex(t => t.CategoryId);
+        modelBuilder.Entity<Tool>().HasIndex(t => t.UsersId);
+        modelBuilder.Entity<Tool>().HasIndex(t => t.Price);
+        modelBuilder.Entity<Tool>().HasIndex(t => t.Location);
         
         
         modelBuilder.Entity<User>()

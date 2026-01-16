@@ -27,6 +27,13 @@ public record PendingReviewDto(
     UserDtos User
 );
 
+public record PagedResultDto<T>(
+    IReadOnlyList<T> Items,
+    int Page,
+    int PageSize,
+    int TotalCount
+);
+
 public record ReviewDto(
     Guid Id,
     int Rating,

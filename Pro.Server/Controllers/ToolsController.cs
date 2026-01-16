@@ -151,6 +151,73 @@ public class ToolsController : ControllerBase
         return Ok(list);
     }
 
+    [HttpGet("paged")]
+    public async Task<ActionResult<PagedResultDto<ToolListItemDto>>> GetToolsPaged(
+        [FromQuery] string? category,
+        [FromQuery] string? owner,
+        [FromQuery] float? minPrice,
+        [FromQuery] float? maxPrice,
+        [FromQuery] string? location,
+        [FromQuery] string? search,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 24
+    )
+    {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 24;
+        if (pageSize > 100) pageSize = 100;
+
+        var query = _db.Tools
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(category))
+            query = query.Where(t => t.Category.Name == category);
+
+        if (!string.IsNullOrWhiteSpace(owner))
+            query = query.Where(t => t.User.Username == owner);
+
+        if (!string.IsNullOrWhiteSpace(location))
+        {
+            location = location.Trim();
+            query = query.Where(t => EF.Functions.ILike(t.Location, location));
+        }
+
+        if (minPrice is not null)
+            query = query.Where(t => t.Price >= minPrice.Value);
+
+        if (maxPrice is not null)
+            query = query.Where(t => t.Price <= maxPrice.Value);
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            search = search.Trim();
+            query = query.Where(t =>
+                EF.Functions.ILike(t.Name, $"%{search}%") ||
+                EF.Functions.ILike(t.Description, $"%{search}%")
+            );
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(t => t.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(t => new ToolListItemDto(
+                t.Id,
+                t.Name,
+                t.Price,
+                Img(t.ImagePath),
+                t.Category.Name,
+                t.User.Username,
+                t.Location
+            ))
+            .ToListAsync();
+
+        return Ok(new PagedResultDto<ToolListItemDto>(items, page, pageSize, totalCount));
+    }
+    
     [HttpGet("{toolId:guid}")]
     public async Task<ActionResult<ToolDetailsDto>> GetTool(Guid toolId)
     {

@@ -1,46 +1,231 @@
 ﻿<Page x:Class="Pro.Client.Views.ToolListPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="ToolListPage" Background="#F8FAFC">
-    <Grid Margin="20">
+      Title="ToolListPage"
+      Background="#0B1220"
+      TextElement.FontFamily="Segoe UI"
+      TextElement.FontSize="13"
+      TextElement.Foreground="#E5E7EB">
+
+    <Page.Resources>
+        <SolidColorBrush x:Key="ShellBg" Color="#0B1220"/>
+        <SolidColorBrush x:Key="PanelBg" Color="#111B2E"/>
+        <SolidColorBrush x:Key="CardBg" Color="#0F1A2E"/>
+        <SolidColorBrush x:Key="BorderC" Color="#24314D"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#9CA3AF"/>
+        <SolidColorBrush x:Key="Accent" Color="#F97316"/>
+
+        <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#0F1A2E"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#0F1A2E"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#17233A"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#E5E7EB"/>
+
+        <Style x:Key="DarkComboBoxItem" TargetType="{x:Type ComboBoxItem}">
+            <Setter Property="Background" Value="#0F1A2E"/>
+            <Setter Property="Foreground" Value="#E5E7EB"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Style.Triggers>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" Value="#17233A"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#17233A"/>
+                    <Setter Property="Foreground" Value="#E5E7EB"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FilterLabel" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+            <Setter Property="Margin" Value="0,18,0,8"/>
+        </Style>
+
+        <Style TargetType="{x:Type ComboBox}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Background" Value="{StaticResource CardBg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderC}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#E5E7EB"/>
+            <Setter Property="ItemContainerStyle" Value="{StaticResource DarkComboBoxItem}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Grid SnapsToDevicePixels="True">
+                            <ToggleButton x:Name="ToggleButton"
+                                          Focusable="False"
+                                          ClickMode="Press"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <Border x:Name="Bd"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="8"
+                                                Padding="{TemplateBinding Padding}">
+                                            <DockPanel LastChildFill="True">
+                                                <Border DockPanel.Dock="Right"
+                                                        Width="34"
+                                                        Background="Transparent">
+                                                    <Path Fill="#9CA3AF"
+                                                          Width="10" Height="6"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"
+                                                          Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                                </Border>
+
+                                                <ContentPresenter x:Name="ContentSite"
+                                                                  VerticalAlignment="Center"
+                                                                  HorizontalAlignment="Left"
+                                                                  TextElement.Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                                  Content="{Binding SelectionBoxItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                                  ContentTemplate="{Binding SelectionBoxItemTemplate, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                                  ContentTemplateSelector="{Binding ItemTemplateSelector, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                                            </DockPanel>
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="#334466"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.55"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+
+                                <ToggleButton.Background>
+                                    <Binding Path="Background" RelativeSource="{RelativeSource AncestorType=ComboBox}"/>
+                                </ToggleButton.Background>
+                                <ToggleButton.BorderBrush>
+                                    <Binding Path="BorderBrush" RelativeSource="{RelativeSource AncestorType=ComboBox}"/>
+                                </ToggleButton.BorderBrush>
+                                <ToggleButton.BorderThickness>
+                                    <Binding Path="BorderThickness" RelativeSource="{RelativeSource AncestorType=ComboBox}"/>
+                                </ToggleButton.BorderThickness>
+                                <ToggleButton.Padding>
+                                    <Binding Path="Padding" RelativeSource="{RelativeSource AncestorType=ComboBox}"/>
+                                </ToggleButton.Padding>
+                            </ToggleButton>
+
+                            <Popup x:Name="PART_Popup"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   Placement="Bottom"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Fade"
+                                   PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                <Border Background="{StaticResource CardBg}"
+                                        BorderBrush="{StaticResource BorderC}"
+                                        BorderThickness="1"
+                                        CornerRadius="10"
+                                        Padding="6"
+                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                        SnapsToDevicePixels="True">
+                                    <ScrollViewer MaxHeight="260"
+                                                  Background="{StaticResource CardBg}"
+                                                  CanContentScroll="True">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Background" Value="{StaticResource CardBg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderC}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#E5E7EB"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Margin="24">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="330"/>
+            <ColumnDefinition Width="24"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Background="#F5F7FA" Grid.Column="0" >
-            <TextBlock Text="Category" FontSize="16" FontWeight="Bold" Margin="0,0,0,8"/>
-            <ComboBox x:Name="CategoryFilterComboBox" SelectionChanged="Filter_Changed"/>
+        <Border Grid.Column="0"
+                Background="{StaticResource PanelBg}"
+                BorderBrush="{StaticResource BorderC}"
+                BorderThickness="1"
+                CornerRadius="16"
+                Padding="18">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <TextBlock Text="Filters" FontSize="18" FontWeight="Bold" Margin="0,0,0,6"/>
+                    <TextBlock Text="Narrow down tools near you" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Owner" FontSize="16" FontWeight="Bold" Margin="0,20,0,8"/>
-            <ComboBox x:Name="UserFilterComboBox" SelectionChanged="Filter_Changed"/>
-            
-            <TextBlock Text="Location" FontSize="16" FontWeight="Bold" Margin="0,20,0,8"/>
-            <ComboBox x:Name="LocationFilterComboBox" SelectionChanged="Filter_Changed"/>
+                    <TextBlock Text="Category" Style="{StaticResource FilterLabel}"/>
+                    <ComboBox x:Name="CategoryFilterComboBox" SelectionChanged="Filter_Changed"/>
 
-            <TextBlock Text="Min Price" FontSize="16" FontWeight="Bold" Margin="0,20,0,8"/>
-            <TextBox x:Name="MinPriceTextBox"
-                     Margin="0,0,0,10"
-                     TextChanged="Filter_Changed"
-                     ToolTip="Leave empty for no minimum"/>
-            
-            <TextBlock Text="Max Price" FontSize="16" FontWeight="Bold" Margin="0,10,0,8"/>
-            <TextBox x:Name="MaxPriceTextBox"
-                     TextChanged="Filter_Changed"
-                     ToolTip="Leave empty for no maximum"/>
-        </StackPanel>
+                    <TextBlock Text="Owner" Style="{StaticResource FilterLabel}"/>
+                    <ComboBox x:Name="UserFilterComboBox" SelectionChanged="Filter_Changed"/>
 
-        <StackPanel Grid.Column="1" Margin="20,0,0,0">
-            <TextBlock Text="Tools" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="ToolListPanel">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel IsItemsHost="True"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
+                    <TextBlock Text="Location" Style="{StaticResource FilterLabel}"/>
+                    <ComboBox x:Name="LocationFilterComboBox" SelectionChanged="Filter_Changed"/>
+
+                    <TextBlock Text="Min Price" Style="{StaticResource FilterLabel}"/>
+                    <TextBox x:Name="MinPriceTextBox"
+                             Margin="0,0,0,10"
+                             TextChanged="Filter_Changed"
+                             ToolTip="Leave empty for no minimum"/>
+
+                    <TextBlock Text="Max Price" Style="{StaticResource FilterLabel}" Margin="0,10,0,8"/>
+                    <TextBox x:Name="MaxPriceTextBox"
+                             TextChanged="Filter_Changed"
+                             ToolTip="Leave empty for no maximum"/>
+                </StackPanel>
             </ScrollViewer>
-        </StackPanel>
+        </Border>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="16"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+                <TextBlock Text="Tools" FontSize="24" FontWeight="Bold"/>
+                <TextBlock Text="Browse listings from your area" Foreground="{StaticResource TextSecondary}" Margin="0,4,0,0"/>
+            </StackPanel>
+
+            <Border Grid.Row="2"
+                    Background="#0E1627"
+                    BorderBrush="{StaticResource BorderC}"
+                    BorderThickness="1"
+                    CornerRadius="16"
+                    Padding="16">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="ToolListPanel">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel IsItemsHost="True"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+        </Grid>
     </Grid>
 </Page>
