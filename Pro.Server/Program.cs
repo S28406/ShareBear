@@ -84,7 +84,8 @@ fwd.KnownProxies.Clear();
 app.UseForwardedHeaders(fwd);
 app.UseHttpsRedirection();
 
-var runMigrations = app.Configuration.GetValue<bool>("RunMigrations");
+var enableSwagger = app.Configuration.GetValue("EnableSwagger", true);
+var runMigrations = app.Configuration.GetValue("RunMigrations", false);
 
 if (runMigrations || app.Environment.IsDevelopment())
 {
@@ -94,8 +95,6 @@ if (runMigrations || app.Environment.IsDevelopment())
     DbSeeder.Seed(db);
 }
 
-var enableSwagger = app.Configuration.GetValue<bool>("EnableSwagger");
-
 if (enableSwagger || app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -104,6 +103,8 @@ if (enableSwagger || app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pro.Server v1");
     });
 }
+
+app.MapGet("/", () => Results.Ok("ShareBear API is running. Go to /swagger"));
 
 app.UseStaticFiles();
 
