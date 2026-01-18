@@ -6,7 +6,8 @@ namespace Pro.Client.Services;
 
 public static class Api
 {
-    public const string DefaultBaseUrl = "http://localhost:5262";
+    // public const string DefaultBaseUrl = "http://localhost:5262";
+    public const string DefaultBaseUrl = "https://sharebear.onrender.com";
     public static string BaseUrl { get; private set; } = DefaultBaseUrl;
     public static IToolRentApi Instance { get; private set; } = new HttpToolRentApi(DefaultBaseUrl);
     static Api()
