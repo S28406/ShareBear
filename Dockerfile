@@ -7,6 +7,9 @@ COPY . .
 RUN dotnet restore Pro.Server/Pro.Server.csproj
 RUN dotnet publish Pro.Server/Pro.Server.csproj -c Release -o /app/publish
 
+RUN mkdir -p /app/publish/wwwroot/images \
+    && cp -r /src/Pro.Client/Images/* /app/publish/wwwroot/images/
+
 # ===== RUNTIME STAGE =====
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
