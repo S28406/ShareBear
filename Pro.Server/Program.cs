@@ -94,10 +94,15 @@ if (runMigrations || app.Environment.IsDevelopment())
     DbSeeder.Seed(db);
 }
 
-if (app.Environment.IsDevelopment())
+var enableSwagger = app.Configuration.GetValue<bool>("EnableSwagger");
+
+if (enableSwagger || app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pro.Server v1");
+    });
 }
 
 app.UseStaticFiles();
