@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PRO.Data.Context;
 using PRO_.Data.Seeder;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,8 +46,8 @@ builder.Services.AddDbContext<ToolLendingContext>(options =>
 );
 
 var jwt = builder.Configuration.GetSection("Jwt");
-var issuer = jwt["Issuer"];
-var audience = jwt["Audience"];
+var issuer = jwt["Issuer"] ?? throw new InvalidOperationException("Jwt:Issuer missing");
+var audience = jwt["Audience"] ?? throw new InvalidOperationException("Jwt:Audience missing");
 var key = jwt["Key"] ?? throw new InvalidOperationException("Jwt:Key missing");
 
 builder.Services
@@ -73,15 +74,30 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+var fwd = new ForwardedHeadersOptions
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+fwd.KnownNetworks.Clear();
+fwd.KnownProxies.Clear();
 
+app.UseForwardedHeaders(fwd);
+app.UseHttpsRedirection();
+
+var runMigrations = app.Configuration.GetValue<bool>("RunMigrations");
+
+if (runMigrations || app.Environment.IsDevelopment())
+{
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ToolLendingContext>();
     db.Database.Migrate();
     DbSeeder.Seed(db);
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseStaticFiles();
