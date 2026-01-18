@@ -131,7 +131,6 @@ public partial class MyToolsPage : Page
                     Cursor = Cursors.Hand
                 };
 
-                // Dark-danger look (still clearly “delete”)
                 if (primaryBtnStyle != null)
                 {
                     delBtn.Background = B("#3B1B1B");

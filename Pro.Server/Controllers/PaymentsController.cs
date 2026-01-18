@@ -28,8 +28,6 @@ public class PaymentsController : ControllerBase
 
     private static string MakeReceiptNumber(Guid paymentId, DateTime utcNow)
     {
-        // Thesis-friendly receipt number
-        // Example: TR-20260112-AB12CD
         var shortId = paymentId.ToString("N")[..6].ToUpperInvariant();
         return $"TR-{utcNow:yyyyMMdd}-{shortId}";
     }
