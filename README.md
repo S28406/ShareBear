@@ -1,150 +1,70 @@
-# ShareBear – Tools Sharing Platform
+# ShareBear 🐻
 
-**Author**: Makar Shcherbiak  
-**Institution**: Polish-Japanese Academy of Computer Technology  
+A full-stack desktop tool-sharing platform built as a Bachelor's thesis project 
+at PJAIT Warsaw. Connects tool owners and borrowers in a secure, role-based 
+sharing environment.
 
----
+## Tech Stack
 
-## 📘 Overview
+**Client:** WPF (.NET 9, MVVM)  
+**Server:** ASP.NET Core (.NET 9), Entity Framework Core, PostgreSQL  
+**Auth:** JWT Bearer tokens  
+**Docs:** Swagger / OpenAPI  
+**Deployment:** Render  
+**Testing:** NUnit  
 
-**ShareBear** is a full-featured platform designed to promote community-based sharing of work tools. In the spirit of the sharing economy, this project helps reduce costs, limit environmental waste, and increase accessibility to expensive or rarely used tools. It connects individual users and businesses to share or rent tools in a secure, sustainable, and user-friendly environment.
+## Features
 
----
+- Role-based access control (Seller, Admin, Borrower)
+- JWT authentication with secure token validation
+- Tool listings with server-side pagination and filtered search
+- Case-insensitive full-text search using PostgreSQL ILike
+- File upload handling for tool images
+- Swagger UI with Bearer token support for API exploration
+- Database migrations and seeder for initial data
+- Multi-project solution (client, server, shared)
 
-## 🎯 Aims and Objectives
+## Architecture
+```
+ShareBear/
+├── PRO/          # WPF desktop client (MVVM)
+├── PRO.Server/   # ASP.NET Core REST API
+└── Pro.Shared/   # Shared DTOs and models
+```
 
-### Aims
-- To develop a user-friendly platform that connects tool owners and borrowers.
-- To support sustainability through shared use of underutilized resources.
-- To ensure secure and transparent transactions for all users.
+## Running Locally
 
-### Objectives
-- Enable easy tool listing, searching, and booking.
-- Provide a secure payment and transaction flow.
-- Include feedback systems for accountability and trust.
-- Offer administrative tools for moderation and analytics.
-- Implement features for real-time availability and dispute resolution.
+### Prerequisites
+- .NET 9 SDK
+- PostgreSQL (default config assumes `localhost:5432`)
 
----
+### 1. Configure the Server
+In `Pro.Server/appsettings.json`, set your values:
+```json
+{
+  "Jwt": {
+    "Issuer": "Pro.Server",
+    "Audience": "Pro.Client",
+    "Key": "your-secret-key-at-least-32-characters-long"
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=toollendingdb;Username=postgres;Password=yourpassword"
+  }
+}
+```
 
-## 🌐 Context
+### 2. Run the Server
+```bash
+cd Pro.Server
+dotnet ef database update
+dotnet run
+```
 
-Tools are often expensive, task-specific, and underused. ShareBear is designed to help freelancers, homeowners, and small businesses reduce costs by borrowing tools when needed. It supports efficient resource use, encourages local cooperation, and serves as a real-world application of the circular economy.
+### 3. Run the Client
+```bash
+cd Pro.Client
+dotnet run
+```
 
----
-
-## ⚙️ Functional Requirements
-
-### User Management
-- User registration and role-based access (owner, borrower, moderator)
-- Profile and account management
-
-### Tool Listings
-- Add/edit/delete tool entries
-- Upload images, set availability, describe usage
-
-### Search & Discovery
-- Filtered search by location, price, type, availability
-
-### Booking System
-- Calendar availability selection
-- Booking confirmations and notifications
-
-### Payment Gateway
-- Secure online payments
-- Invoicing and receipt generation
-
-### Review System
-- User and tool ratings
-- Moderated feedback
-
-### Admin Dashboard
-- Manage users, disputes, listings, and data insights
-
----
-
-## 🖼️ Use Case Scenario
-
-**Actor:** Customer  
-**Purpose:** Booking a tool  
-**Flow Summary:**
-1. Customer initiates a booking.
-2. System displays tool owner and availability.
-3. Date is selected and confirmed.
-4. System processes payment and sends confirmation.
-5. Owner is notified of the booking.
-
-**Failure Flow:** Payment fails – system retries or halts process if timeout occurs.
-
----
-
-## 📈 Non-Functional Requirements
-
-- **Performance**: Supports 10,000+ users; < 2s response time.
-- **Security**: Encrypted communication and secure authentication.
-- **Usability**: Simple, responsive, and accessible UI/UX.
-
----
-
-## 🗃️ Database Design
-
-Entities:
-- **Users** – profile, roles, and activity
-- **Tools** – listings, availability, and ownership
-- **Borrows** – booking history, multi-tool per session
-- **Payments** – payment status, history, and receipts
-
-Relationships:
-- One-to-many between Users and Tools
-- Many-to-many between Tools and Borrows
-
----
-
-## 🛠️ Technologies Used
-
-### 🗄️ Database
-- **MySQL**: Lightweight, fast, and scalable RDBMS
-
-### 🔧 Backend
-- **.NET + Entity Framework**: Fast server-side performance, LINQ integration, scalable
-- **NUnit**: Unit testing framework with parallel execution
-
-### 🎨 Frontend
-- **React (JavaScript)**: Component-based, responsive, scalable UI
-
-### ☁️ Hosting
-- **AWS Cloud**: Scalable, secure, with cross-region backup and failover
-
----
-
-## 🖌️ Design Features
-
-- **Main Page**: Tool listings with search and filters
-- **Sign In / Log In Pages**: Account access and creation
-- **Tool Detail Page**: Tool description, availability calendar, pricing
-- **Shipment Option Page**: Input for delivery preferences
-- **Confirmation Window**: Displays successful transactions and next steps
-
----
-
-## 🌱 Future Enhancements
-
-- Augmented Reality tool previews  
-- Real-time tool tracking  
-- Blockchain-based transaction logs  
-- Gamification (leaderboards, badges, portraits)  
-- Multi-language and multi-currency support
-
----
-
-## 🌍 Social & Environmental Impact
-
-- Encourages resource sharing and local collaboration
-- Reduces waste from unused tools and overproduction
-- Supports circular economy models (potential to extend into car sharing, office rentals, etc.)
-
-
-## 👤 Author
-
-**Makar Shcherbiak**  
-
+The API will be available at `http://localhost:5262` and 
+Swagger UI at `http://localhost:5262/swagger`.
